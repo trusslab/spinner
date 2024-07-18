@@ -1,0 +1,468 @@
+PID: 1367996
+TGID: 1367996
+UID: 0
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb2565ba0
+ptr: 0xff110002c3f72700
+bytes_req: 184
+bytes_alloc: 256
+gfp_flags: 3520
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb24054ca][0xffffffffb24054ca][0xffffffffb2565ba0][0xffffffffb2565e52][0xffffffffb1e06355][0xffffffffb36dd301][0xffffffffb380012f]
+
+PID: 910259
+TGID: 910259
+UID: 0
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb261defb
+ptr: 0xff110001553b3a00
+bytes_req: 144
+bytes_alloc: 256
+gfp_flags: 3392
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb2403519][0xffffffffb2403519][0xffffffffb261defb][0xffffffffb26239c1][0xffffffffb264cf41][0xffffffffb26552eb][0xffffffffb26560ab][0xffffffffb233a5ea][0xffffffffb252a999][0xffffffffb252b21f][0xffffffffb252b6e0][0xffffffffb252bb84][0xffffffffb252e1fe][0xffffffffb1f849b9][0xffffffffb1f85e81][0xffffffffb1f96696][0xffffffffb1e8804d][0xffffffffb1e04b7a]
+
+PID: 910259
+TGID: 910259
+UID: 0
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb261defb
+ptr: 0xff110001553b3b00
+bytes_req: 144
+bytes_alloc: 256
+gfp_flags: 3392
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb2403519][0xffffffffb2403519][0xffffffffb261defb][0xffffffffb26239c1][0xffffffffb264cf41][0xffffffffb2627f5b][0xffffffffb262814e][0xffffffffb268a7ab][0xffffffffb1f849b9][0xffffffffb1f85e81][0xffffffffb1f96696][0xffffffffb1e8804d][0xffffffffb1e04b7a]
+
+PID: 672
+TGID: 672
+UID: 0
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb2621fbe
+ptr: 0xff110001461ad200
+bytes_req: 96
+bytes_alloc: 128
+gfp_flags: 36160
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb2403519][0xffffffffb2403519][0xffffffffb2621fbe][0xffffffffb26260d9][0xffffffffb265730e][0xffffffffb265ab2a][0xffffffffb24fae5c][0xffffffffb24b0ef2][0xffffffffb24b1612][0xffffffffb24b16e6][0xffffffffb1e05113][0xffffffffb36dd301][0xffffffffb380012f]
+
+PID: 1345716
+TGID: 1345716
+UID: 0
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb28d5b57
+ptr: 0xff110002c3f73500
+bytes_req: 152
+bytes_alloc: 256
+gfp_flags: 3072
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb2403519][0xffffffffb2403519][0xffffffffb28d5b57][0xffffffffb28ed5c7][0xffffffffb2f23e86][0xffffffffb2f4aced][0xffffffffb300c91a][0xffffffffb2f4b119][0xffffffffb2927639][0xffffffffb29277ad][0xffffffffb1f849b9][0xffffffffb1f85e81][0xffffffffb1f96696][0xffffffffb1e8804d][0xffffffffb1e04b7a]
+
+PID: 1367996
+TGID: 1367996
+UID: 0
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb261defb
+ptr: 0xff1100025b4fb700
+bytes_req: 96
+bytes_alloc: 128
+gfp_flags: 3392
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb2403519][0xffffffffb2403519][0xffffffffb261defb][0xffffffffb26239c1][0xffffffffb264ade4][0xffffffffb2648042][0xffffffffb2657f31][0xffffffffb231fb19][0xffffffffb2630f9c][0xffffffffb26311d1][0xffffffffb24baf66][0xffffffffb24bb711][0xffffffffb24bb806][0xffffffffb1e06241][0xffffffffb36dd301][0xffffffffb380012f]
+
+PID: 1345716
+TGID: 1345716
+UID: 0
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb28d5b57
+ptr: 0xff110002c3f72300
+bytes_req: 152
+bytes_alloc: 256
+gfp_flags: 3072
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb2403519][0xffffffffb2403519][0xffffffffb28d5b57][0xffffffffb28ed5c7][0xffffffffb2f23e86][0xffffffffb2f4aced][0xffffffffb300c91a][0xffffffffb2f4b119][0xffffffffb2927639][0xffffffffb29277ad][0xffffffffb1f849b9][0xffffffffb1f85e81][0xffffffffb1f96696][0xffffffffb1e8804d][0xffffffffb1e04b7a]
+
+PID: 1367994
+TGID: 1367994
+UID: 1000
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb2367691
+ptr: 0xff110003c7e71800
+bytes_req: 1024
+bytes_alloc: 2048
+gfp_flags: 19648
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb24047b9][0xffffffffb24047b9][0xffffffffb2367691][0xffffffffb2d56e65][0xffffffffb2d56f76][0xffffffffb24baf66][0xffffffffb24bb711][0xffffffffb24bb806][0xffffffffb1e06241][0xffffffffb36dd301][0xffffffffb380012f]
+
+PID: 1367994
+TGID: 1367994
+UID: 1000
+UID: 0
+
+kmalloc details
+call_site: 0xffffffffb2d667a7
+ptr: 0xff110003c7e70800
+bytes_req: 544
+bytes_alloc: 2048
+gfp_flags: 10272
+node: -1
+
+uts_namespace details
+sysname: Linux
+nodename: priya-de
+release: 6.9.0
+version: #2 SMP P
+machine: x86_64
+domainname: (none)
+
+mnt_namespace details
+seq: 2
+event: 1367
+nr_mounts: 0
+pending mounts: 0
+
+pid_namespace details
+idr_base: 0
+idr_next: 1367997
+pid_allocated: -2147483150
+level: 0
+reboot: 0
+
+ipc_namespace_details
+used_sems: 0
+msg_ctlmax: 8192
+msg_ctlmnb: 16384
+msg_ctlmni: 32000
+shm_ctlmax: -16777217
+shm_ctlall: -16777217
+shm_tot: 0
+shm_ctlmni: 4096
+shm_rmid_forced: 0
+mq_queues_count: 0
+mq_queues_max: 256
+mq_msg_max: 0
+mq_msgsize_max: 0
+mq_msg_default: 0
+Stacktrace: 
+[0xffffffffb2403519][0xffffffffb2403519][0xffffffffb2d667a7][0xffffffffb2d668ec][0xffffffffb2d67270][0xffffffffb2d6c60d][0xffffffffb2d5e8f9][0xffffffffb2d56cf1][0xffffffffb2d56f76][0xffffffffb24baf66][0xffffffffb24bb711][0xffffffffb24bb806][0xffffffffb1e06241][0xffffffffb36dd301][0xffffffffb380012f]
+

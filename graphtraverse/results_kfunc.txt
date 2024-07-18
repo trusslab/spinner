@@ -1,0 +1,198 @@
+Enter .dot file name:Enter .json file name:networkx graph created
+WARNING: bpf_get_stackid used _raw_spin_lock
+['bpf_get_stackid', '__bpf_get_stackid', 'pcpu_freelist_pop', '__pcpu_freelist_pop', '_raw_spin_lock']
+WARNING: bpf_get_stackid used _raw_spin_lock_irqsave
+['bpf_get_stackid', '__bpf_get_stackid', 'stack_map_get_build_id_offset', 'up_read', '_raw_spin_lock_irqsave']
+WARNING: bpf_get_stackid used down_trylock
+['bpf_get_stackid', 'get_perf_callchain', 'perf_callchain_kernel', 'unwind_next_frame', '_printk_deferred', 'vprintk_emit', 'down_trylock']
+WARNING: bpf_get_stack used _raw_spin_lock_irqsave
+['bpf_get_stack', '__bpf_get_stack', 'stack_map_get_build_id_offset', 'up_read', '_raw_spin_lock_irqsave']
+WARNING: bpf_get_stack used _raw_spin_lock
+['bpf_get_stack', '__bpf_get_stack', 'stack_map_get_build_id_offset', 'up_read', 'wake_up_q', 'try_to_wake_up', '_raw_spin_lock']
+WARNING: bpf_get_stack used down_trylock
+['bpf_get_stack', '__bpf_get_stack', 'get_perf_callchain', 'perf_callchain_kernel', 'unwind_next_frame', '_printk_deferred', 'vprintk_emit', 'down_trylock']
+WARNING: bpf_ringbuf_output used _raw_spin_lock_irqsave
+['bpf_ringbuf_output', '__bpf_ringbuf_reserve', '_raw_spin_lock_irqsave']
+WARNING: bpf_ringbuf_reserve used _raw_spin_lock_irqsave
+['bpf_ringbuf_reserve', '__bpf_ringbuf_reserve', '_raw_spin_lock_irqsave']
+WARNING: bpf_snprintf_btf used mutex_lock
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock']
+WARNING: bpf_snprintf_btf used mutex_unlock
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'mutex_unlock']
+WARNING: bpf_snprintf_btf used __mutex_lock_slowpath
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock', '__mutex_lock_slowpath']
+WARNING: bpf_snprintf_btf used __mutex_unlock_slowpath
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'mutex_unlock', '__mutex_unlock_slowpath']
+WARNING: bpf_snprintf_btf used __mutex_lock
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock', '__mutex_lock_slowpath', '__mutex_lock']
+WARNING: bpf_snprintf_btf used _raw_spin_lock
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'mutex_unlock', '__mutex_unlock_slowpath', '_raw_spin_lock']
+WARNING: bpf_snprintf_btf used _raw_spin_lock_bh
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'btf_parse_vmlinux', 'btf_alloc_id', '_raw_spin_lock_bh']
+WARNING: bpf_snprintf_btf used mutex_spin_on_owner
+['bpf_snprintf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock', '__mutex_lock_slowpath', '__mutex_lock', 'mutex_spin_on_owner']
+WARNING: bpf_seq_printf_btf used mutex_lock
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock']
+WARNING: bpf_seq_printf_btf used mutex_unlock
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'mutex_unlock']
+WARNING: bpf_seq_printf_btf used __mutex_lock_slowpath
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock', '__mutex_lock_slowpath']
+WARNING: bpf_seq_printf_btf used __mutex_unlock_slowpath
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'mutex_unlock', '__mutex_unlock_slowpath']
+WARNING: bpf_seq_printf_btf used __mutex_lock
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock', '__mutex_lock_slowpath', '__mutex_lock']
+WARNING: bpf_seq_printf_btf used _raw_spin_lock
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'mutex_unlock', '__mutex_unlock_slowpath', '_raw_spin_lock']
+WARNING: bpf_seq_printf_btf used _raw_spin_lock_bh
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'btf_parse_vmlinux', 'btf_alloc_id', '_raw_spin_lock_bh']
+WARNING: bpf_seq_printf_btf used mutex_spin_on_owner
+['bpf_seq_printf_btf', 'bpf_get_btf_vmlinux', 'mutex_lock', '__mutex_lock_slowpath', '__mutex_lock', 'mutex_spin_on_owner']
+WARNING: bpf_timer_start used _raw_spin_lock_irqsave
+['bpf_timer_start', 'hrtimer_start_range_ns', '_raw_spin_lock_irqsave']
+WARNING: bpf_timer_start used _raw_spin_lock_irq
+['bpf_timer_start', 'hrtimer_start_range_ns', 'pc_nvram_set_checksum', '_raw_spin_lock_irq']
+WARNING: bpf_loop used _raw_spin_lock_irqsave
+['bpf_loop', 'bpf_btf_find_by_name_kind', '_raw_spin_lock_irqsave']
+WARNING: bpf_ringbuf_reserve_dynptr used _raw_spin_lock_irqsave
+['bpf_ringbuf_reserve_dynptr', '__bpf_ringbuf_reserve', '_raw_spin_lock_irqsave']
+WARNING: bpf_user_ringbuf_drain used _raw_spin_lock_irqsave
+['bpf_user_ringbuf_drain', 'bpf_btf_find_by_name_kind', '_raw_spin_lock_irqsave']
+WARNING: bpf_cgrp_storage_get used _raw_spin_lock_irqsave
+['bpf_cgrp_storage_get', '__bpf_local_storage_insert_cache', '_raw_spin_lock_irqsave']
+WARNING: bpf_cgrp_storage_delete used _raw_spin_lock_irqsave
+['bpf_cgrp_storage_delete', 'bpf_selem_unlink', '_raw_spin_lock_irqsave']
+WARNING: bpf_cgrp_storage_delete used _raw_spin_lock
+['bpf_cgrp_storage_delete', 'migrate_enable', 'task_rq_lock', '_raw_spin_lock']
+WARNING: bpf_for_each_array_elem used _raw_spin_lock_irqsave
+['bpf_for_each_array_elem', 'bpf_btf_find_by_name_kind', '_raw_spin_lock_irqsave']
+WARNING: htab_map_update_elem used _raw_spin_lock
+['htab_map_update_elem', '_raw_spin_lock']
+WARNING: htab_map_update_elem used regmap_lock_mutex
+['htab_map_update_elem', 'bpf_obj_free_fields', 'regmap_lock_mutex']
+WARNING: htab_map_update_elem used regmap_unlock_mutex
+['htab_map_update_elem', 'bpf_obj_free_fields', 'regmap_unlock_mutex']
+WARNING: htab_map_update_elem used _raw_spin_lock_irqsave
+['htab_map_update_elem', 'bpf_obj_free_fields', 'free_percpu', '_raw_spin_lock_irqsave']
+WARNING: htab_map_update_elem used mutex_lock
+['htab_map_update_elem', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_lock']
+WARNING: htab_map_update_elem used mutex_unlock
+['htab_map_update_elem', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_unlock']
+WARNING: htab_lru_map_update_elem used _raw_spin_lock
+['htab_lru_map_update_elem', '_raw_spin_lock']
+WARNING: htab_lru_map_update_elem used _raw_spin_lock_irqsave
+['htab_lru_map_update_elem', 'bpf_lru_pop_free', '_raw_spin_lock_irqsave']
+WARNING: htab_lru_map_update_elem used regmap_lock_mutex
+['htab_lru_map_update_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'regmap_lock_mutex']
+WARNING: htab_lru_map_update_elem used regmap_unlock_mutex
+['htab_lru_map_update_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'regmap_unlock_mutex']
+WARNING: htab_lru_map_update_elem used mutex_lock
+['htab_lru_map_update_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_lock']
+WARNING: htab_lru_map_update_elem used mutex_unlock
+['htab_lru_map_update_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_unlock']
+WARNING: htab_lru_map_delete_elem used _raw_spin_lock
+['htab_lru_map_delete_elem', '_raw_spin_lock']
+WARNING: htab_lru_map_delete_elem used regmap_lock_mutex
+['htab_lru_map_delete_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'regmap_lock_mutex']
+WARNING: htab_lru_map_delete_elem used regmap_unlock_mutex
+['htab_lru_map_delete_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'regmap_unlock_mutex']
+WARNING: htab_lru_map_delete_elem used _raw_spin_lock_irqsave
+['htab_lru_map_delete_elem', 'htab_lru_push_free', 'bpf_lru_push_free', '_raw_spin_lock_irqsave']
+WARNING: htab_lru_map_delete_elem used mutex_lock
+['htab_lru_map_delete_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_lock']
+WARNING: htab_lru_map_delete_elem used mutex_unlock
+['htab_lru_map_delete_elem', 'htab_lru_push_free', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_unlock']
+WARNING: htab_percpu_map_update_elem used _raw_spin_lock
+['htab_percpu_map_update_elem', '__htab_percpu_map_update_elem', '_raw_spin_lock']
+WARNING: htab_percpu_map_update_elem used _raw_spin_lock_irqsave
+['htab_percpu_map_update_elem', '__htab_percpu_map_update_elem', 'alloc_htab_elem', '__percpu_counter_compare', '_raw_spin_lock_irqsave']
+WARNING: htab_lru_percpu_map_update_elem used _raw_spin_lock
+['htab_lru_percpu_map_update_elem', '__htab_lru_percpu_map_update_elem', '_raw_spin_lock']
+WARNING: htab_lru_percpu_map_update_elem used _raw_spin_lock_irqsave
+['htab_lru_percpu_map_update_elem', '__htab_lru_percpu_map_update_elem', 'bpf_lru_push_free', '_raw_spin_lock_irqsave']
+WARNING: htab_lru_percpu_map_update_elem used regmap_lock_mutex
+['htab_lru_percpu_map_update_elem', '__htab_lru_percpu_map_update_elem', 'bpf_lru_pop_free', 'htab_lru_map_delete_node', 'bpf_obj_free_fields', 'regmap_lock_mutex']
+WARNING: htab_lru_percpu_map_update_elem used regmap_unlock_mutex
+['htab_lru_percpu_map_update_elem', '__htab_lru_percpu_map_update_elem', 'bpf_lru_pop_free', 'htab_lru_map_delete_node', 'bpf_obj_free_fields', 'regmap_unlock_mutex']
+WARNING: htab_lru_percpu_map_update_elem used mutex_lock
+['htab_lru_percpu_map_update_elem', '__htab_lru_percpu_map_update_elem', 'bpf_lru_pop_free', 'htab_lru_map_delete_node', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_lock']
+WARNING: htab_lru_percpu_map_update_elem used mutex_unlock
+['htab_lru_percpu_map_update_elem', '__htab_lru_percpu_map_update_elem', 'bpf_lru_pop_free', 'htab_lru_map_delete_node', 'bpf_obj_free_fields', 'devm_aperture_acquire_release', 'mutex_unlock']
+WARNING: trie_update_elem used _raw_spin_lock_irqsave
+['trie_update_elem', '_raw_spin_lock_irqsave']
+WARNING: trie_delete_elem used _raw_spin_lock_irqsave
+['trie_delete_elem', '_raw_spin_lock_irqsave']
+WARNING: sock_map_update_elem used _raw_spin_lock
+['sock_map_update_elem', '_raw_spin_lock']
+WARNING: queue_stack_map_push_elem used _raw_spin_lock_irqsave
+['queue_stack_map_push_elem', '_raw_spin_lock_irqsave']
+WARNING: stack_map_pop_elem used _raw_spin_lock_irqsave
+['stack_map_pop_elem', '_raw_spin_lock_irqsave']
+WARNING: stack_map_peek_elem used _raw_spin_lock_irqsave
+['stack_map_peek_elem', '_raw_spin_lock_irqsave']
+WARNING: queue_map_pop_elem used _raw_spin_lock_irqsave
+['queue_map_pop_elem', '_raw_spin_lock_irqsave']
+WARNING: queue_map_peek_elem used _raw_spin_lock_irqsave
+['queue_map_peek_elem', '_raw_spin_lock_irqsave']
+
+
+
+WARNING: bpf_arena_alloc_pages used mutex_lock
+['bpf_arena_alloc_pages', 'mutex_lock']
+WARNING: bpf_arena_alloc_pages used mutex_unlock
+['bpf_arena_alloc_pages', 'mutex_unlock']
+WARNING: bpf_arena_alloc_pages used __mutex_lock_slowpath
+['bpf_arena_alloc_pages', 'mutex_lock', '__mutex_lock_slowpath']
+WARNING: bpf_arena_alloc_pages used __mutex_unlock_slowpath
+['bpf_arena_alloc_pages', 'mutex_unlock', '__mutex_unlock_slowpath']
+WARNING: bpf_arena_alloc_pages used _raw_spin_lock
+['bpf_arena_alloc_pages', 'mtree_erase', '_raw_spin_lock']
+WARNING: bpf_arena_alloc_pages used __mutex_lock
+['bpf_arena_alloc_pages', 'mutex_lock', '__mutex_lock_slowpath', '__mutex_lock']
+WARNING: bpf_arena_free_pages used mutex_lock
+['bpf_arena_free_pages', 'arena_free_pages', 'mutex_lock']
+WARNING: bpf_arena_free_pages used mutex_unlock
+['bpf_arena_free_pages', 'arena_free_pages', 'mutex_unlock']
+WARNING: bpf_arena_free_pages used __mutex_lock_slowpath
+['bpf_arena_free_pages', 'arena_free_pages', 'mutex_lock', '__mutex_lock_slowpath']
+WARNING: bpf_arena_free_pages used __mutex_unlock_slowpath
+['bpf_arena_free_pages', 'arena_free_pages', 'mutex_unlock', '__mutex_unlock_slowpath']
+WARNING: bpf_arena_free_pages used _raw_spin_lock
+['bpf_arena_free_pages', 'arena_free_pages', 'mtree_store_range', '_raw_spin_lock']
+WARNING: bpf_arena_free_pages used __mutex_lock
+['bpf_arena_free_pages', 'arena_free_pages', 'mutex_lock', '__mutex_lock_slowpath', '__mutex_lock']
+WARNING: bpf_arena_free_pages used mutex_spin_on_owner
+['bpf_arena_free_pages', 'arena_free_pages', 'mutex_lock', '__mutex_lock_slowpath', '__mutex_lock', 'mutex_spin_on_owner']
+
+//checked
+WARNING: bpf_cpumask_release used _raw_spin_lock
+['bpf_cpumask_release', 'migrate_enable', 'task_rq_lock', '_raw_spin_lock']
+WARNING: bpf_cpumask_release used _raw_spin_lock_irqsave
+['bpf_cpumask_release', 'migrate_enable', 'task_rq_lock', '_raw_spin_lock_irqsave']
+
+//checked
+WARNING: bpf_rbtree_add_impl used _raw_spin_lock_irqsave
+['bpf_rbtree_add_impl', 'bpf_btf_find_by_name_kind', '_raw_spin_lock_irqsave']
+
+
+WARNING: bpf_iter_task_vma_destroy used _raw_spin_lock_irqsave
+['bpf_iter_task_vma_destroy', 'up_read', '_raw_spin_lock_irqsave']
+
+//checked	
+WARNING: cgroup_rstat_updated used _raw_spin_lock_irqsave
+['cgroup_rstat_updated', '_raw_spin_lock_irqsave']
+WARNING: cgroup_rstat_flush used _raw_spin_lock_irq
+['cgroup_rstat_flush', '_raw_spin_lock_irq']
+WARNING: cgroup_rstat_flush used _raw_spin_lock_irqsave
+['cgroup_rstat_flush', 'cgroup_rstat_flush_locked', '_raw_spin_lock_irqsave']
+
+//checked
+WARNING: crash_kexec used synchronize_rcu
+['crash_kexec', '__crash_kexec', 'machine_crash_shutdown', 'native_machine_crash_shutdown', 'synchronize_rcu']
+WARNING: crash_kexec used synchronize_rcu_expedited
+['crash_kexec', '__crash_kexec', 'machine_crash_shutdown', 'native_machine_crash_shutdown', 'synchronize_rcu_expedited']
+WARNING: crash_kexec used msleep
+['crash_kexec', '__crash_kexec', 'machine_crash_shutdown', 'native_machine_crash_shutdown', 'msleep']
+WARNING: crash_kexec used mutex_lock
+['crash_kexec', '__crash_kexec', 'machine_crash_shutdown', 'native_machine_crash_shutdown', 'acpi_video_unregister', 'mutex_lock']
+WARNING: crash_kexec used mutex_unlock
+['crash_kexec', '__crash_kexec', 'machine_crash_shutdown', 'native_machine_crash_shutdown', 'acpi_video_unregister', 'mutex_unlock']
