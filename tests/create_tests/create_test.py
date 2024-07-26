@@ -19,40 +19,31 @@ def restart_marker():
     marker.write("* Start of BPF helper function descriptions:")
     
 
-f = open ("/home/priya/libbpf-bootstrap/examples/c/test.bpf.c", "w")
-helper_file = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/bpf.h", "r")
-marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "r")
+f = open ("/home/priya/defogger/tests/test.bpf.c", "w")
+helper_file = open("/home/priya/defogger/tests/create_tests/bpf.h", "r")
+marker = open("/home/priya/defogger/tests/create_tests/marker.txt", "r")
+
+prog_type_file = open("/home/priya/defogger/tests/create_tests/prog_type.txt", "r")
+attach_to = prog_type_file.read()
+prog_type_file.close()
 
 f.write("#include \"vmlinux.h\"\n")
 f.write("#include <linux/version.h>\n")
 f.write("#include <bpf/bpf_helpers.h>\n")
+
 f.write("char LICENSE[] SEC(\"license\") = \"Dual BSD/GPL\";\n")
 
-prog_type_file = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/prog_type.txt", "r")
-attach_to = prog_type_file.read()
-prog_type_file.close()
-
 f.write("SEC(\""+attach_to+"\")\n")
-f.write("int test_prog(void *ctx){\n")
+if attach_to=="freplace/print":
+    f.write("__noinline int test_prog(){\n")
+else:
+    f.write("int test_prog(void *ctx){\n")
 
-'''
-
-#f.write("struct __sk_buff sk;")
-
-f.write("struct __sk_buff *skb;")
-
-f.write("__u32 offset;")
-
-f.write("__u64 from, to, flags;")
-
-f.write("long x = bpf_l4_csum_replace(skb, offset, from, to, flags) ;")
-
-'''
 
 marker_fn = marker.read()
 marker.close()
 
-marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "w")
+marker = open("/home/priya/defogger/tests/create_tests/marker.txt", "w")
 read_start = False
 write_marker = False
 
