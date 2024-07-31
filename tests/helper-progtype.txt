@@ -1,5 +1,23 @@
-function_name                           program_type                            compile error       compile warning     allowed
-bpf_map_lookup_elem                     cgroup/connect_unix                     yes                 no                  yes
-bpf_map_update_elem                     cgroup/connect_unix                     yes                 no                  yes
-bpf_map_delete_elem                     cgroup/connect_unix                     yes                 no                  yes
-bpf_probe_read                          cgroup/connect_unix                     yes                 no                  
+bpf_map_update_elem                     struct_ops                              no                  no                  yes
+bpf_map_delete_elem                     struct_ops                              no                  no                  yes
+bpf_probe_read                          struct_ops                              no                  no                  no
+bpf_ktime_get_ns                        struct_ops                              no                  no                  yes
+bpf_trace_printk                        struct_ops                              yes                 no                  yes
+bpf_get_prandom_u32                     struct_ops                              no                  no                  yes
+bpf_get_smp_processor_id                struct_ops                              no                  no                  yes
+bpf_skb_store_bytes                     struct_ops                              no                  yes                 no
+bpf_l3_csum_replace                     struct_ops                              no                  yes                 no
+bpf_l4_csum_replace                     struct_ops                              no                  yes                 no
+bpf_tail_call                           struct_ops                              no                  no                  yes
+bpf_clone_redirect                      struct_ops                              no                  yes                 no
+bpf_get_current_pid_tgid                struct_ops                              no                  no                  no
+bpf_get_current_uid_gid                 struct_ops                              no                  no                  no
+bpf_get_current_comm                    struct_ops                              no                  no                  no
+bpf_get_cgroup_classid                  struct_ops                              no                  yes                 no
+bpf_skb_vlan_push                       struct_ops                              no                  yes                 no
+bpf_skb_vlan_pop                        struct_ops                              no                  yes                 no
+bpf_skb_get_tunnel_key                  struct_ops                              no                  yes                 no
+bpf_skb_set_tunnel_key                  struct_ops                              no                  yes                 no
+bpf_perf_event_read                     struct_ops                              no                  no                  no
+bpf_redirect                            struct_ops                              no                  no                  no
+bpf_get_route_realm                     struct_ops                              

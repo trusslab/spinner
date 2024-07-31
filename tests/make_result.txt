@@ -1,2 +1,0 @@
-cc1: error: ../../vmlinux/x86/: Not a directory
-make: *** [Makefile:124: .output/test.bpf.o] Error 1

@@ -1,1 +1,1 @@
- * u64 bpf_get_current_pid_tgid(void)
+ * Start of BPF helper function descriptions:
