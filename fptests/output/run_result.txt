@@ -1,0 +1,25 @@
+libbpf: loading output/test.bpf.o
+libbpf: elf: section(3) cgroup/dev, size 32, link 0, flags 6, type=1
+libbpf: sec 'cgroup/dev': found program 'test_prog' at insn offset 0 (0 bytes), code size 4 insns (32 bytes)
+libbpf: elf: section(4) license, size 13, link 0, flags 3, type=1
+libbpf: license of output/test.bpf.o is Dual BSD/GPL
+libbpf: elf: section(13) .BTF, size 366, link 0, flags 0, type=1
+libbpf: elf: section(15) .BTF.ext, size 96, link 0, flags 0, type=1
+libbpf: elf: section(23) .symtab, size 288, link 1, flags 0, type=2
+libbpf: looking for externs among 12 symbols...
+libbpf: collected 0 externs total
+libbpf: load bpf program failed: Invalid argument
+libbpf: -- BEGIN DUMP LOG ---
+libbpf: 
+arg#0 reference type('UNKNOWN ') size cannot be determined: -22
+0: R1=ctx() R10=fp0
+; long ret = bpf_skb_change_proto( param0, param1, param2); @ test.bpf.c:11
+0: (b7) r2 = 0                        ; R2_w=0
+1: (85) call bpf_skb_change_proto#31
+unknown func bpf_skb_change_proto#31
+processed 2 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak_states 0 mark_read 0
+
+libbpf: -- END LOG --
+libbpf: failed to load program 'test_prog'
+libbpf: failed to load object 'output/test.bpf.o'
+Error loading BPF target object
