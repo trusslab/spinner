@@ -18,7 +18,6 @@ program_types = ['cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ing
         'xdp/cpumap', 'xdp.frags/devmap', 'xdp/devmap', 'xdp', 'xdp.frags']
 
 
-
 for program_type in program_types:
 
     prog_type_file = open("output/prog_type.txt", "w")
@@ -90,7 +89,7 @@ for program_type in program_types:
 
         run_file = open("output/run_result.txt", "r")
         run_result = run_file.read().replace('\n', '')
-        if 'unknown func' in run_result:
+        if 'unknown func' in run_result or 'program of this type cannot use' in run_result:
             result_file.write(f"{'no'}\n")
         else:
             result_file.write(f"{'yes'}\n")

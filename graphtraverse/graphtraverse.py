@@ -8,14 +8,15 @@ print("networkx graph created")
 
 SVF = 0 
 
-tracepoints = []
-tracepoint_file = open("tracepoints.txt", "r")
-while True:
-    line = tracepoint_file.readline()
-    if not line:
-        break
-    tracepoints.append(line[:-1])
-
+def get_precur_functions():
+    precur_file = open("../fptests/output/precur.txt", "r")
+    precur_funcs = []
+    while True:
+        line = precur_file.readline()
+        if not line:
+            break
+        precur_funcs.append(line.split()[0])
+    return precur_funcs
 
 def get_name(node):
     if not node:
@@ -94,7 +95,7 @@ lock_dict = {'_raw_spin_lock': '_raw_spin_unlock', '_raw_spin_lock_bh': '_raw_sp
 
 skiplist = ['panic', 'machine_crash_shutdown', 'crash_kexec', 'start_kernel', 'emergency_restart', '__queue_work', 'kdb_gdb_state_pass', 'gdbstub_state',
         'vprintk', 'vkdb_printf','__ratelimit', '___ratelimit', 'try_to_wake_up', 'vprintk_emit', '__queue_delayed_work', 'get_random_bytes', 
-        '_get_random_bytes', 'show_stack', 'kernel_text_address',  'kvfree_call_rcu', 'kvfree', 'kfree', 'vfree', 'rcu_read_unlock.46470', 
+        '_get_random_bytes', 'show_stack', 'kernel_text_address',  'kvfree_call_rcu', 'kvfree', 'kfree', 'vfree', 'migrate_enable', 'rcu_read_unlock.46470', 
         'rcu_read_unlock.24024']
 
 def dfs_path(callgraph, source, end, parent_map):
@@ -148,37 +149,14 @@ def dfs_nx(callgraph, source, max_context):
                 warning = 0
                 child_fun_name = get_name(callgraph._node[child])
                 parent_map[child_fun_name] = parent_fun_name
-                #print(child_fun_name)
-                
-                '''
-                skip_list = ['vprintk', '_get_random_bytes', '_printk', 'panic', '__alloc', '__alloc_pages', 'kvfree_call_rcu', 'call_rcu',
-                            'rcu_read_unlock_special', "x86_pmu_event_init", 'intel_pmu_hw_config', 'intel_pmu_bts_config', 'intel_pmu_has_bts', 
-                            'intel_pmu_has_bts_period', 'intel_pmu_lbr_read', 'intel_pmu_handle_irq', 'x86_setup_perfctr', 'x86_pmu_hw_config',
-                            'intel_start_scheduling', 'x86_pmu_handle_irq', 'intel_pmu_cpu_dying', 'intel_pmu_cpu_starting', 'intel_set_tfa']
-                if child_fun_name in skip_list:
-                    visited.add(child)
-                    visited_readable.add(child_fun_name)
-                    continue 
-                '''   
-                '''
-                if child_fun_name == "local_irq_disable":
-                    irq_disabled = 1
-                if child_fun_name == "local_irq_enable":
-                    irq_disabled = 0
-                
-                if child_fun_name in lock_dict:
-                    lock_stack.append(child_fun_name)
-                if lock_stack and child_fun_name == lock_dict[lock_stack[-1]]:
-                    lock_stack.pop()
-                '''
+               
+                if source_fun_name in get_precur_functions():
+                    if (check_NMI(source_fun_name, child_fun_name)):
+                        warning = 2
 
-                #if lock_stack and child_fun_name in tracepoints:
-                if child_fun_name in tracepoints:
-                    warning = 1
-                #if lock_stack and max_context=="P":
-                if max_context=="P":
-                    if(check_sleeping_functions(source_fun_name, child_fun_name)):
-                        warning = 1
+                if "map" in source_fun_name:
+                    if (check_NMI(source_fun_name, child_fun_name)):
+                        warning = 2
 
                 if max_context=="S":
                     #if not irq_disabled:
@@ -216,6 +194,12 @@ def dfs_nx(callgraph, source, max_context):
                     path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
                     if path!=[]:
                         print("WARNING: "+source_fun_name+" used "+child_fun_name)
+                        print(path)
+
+                if warning == 2:
+                     path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
+                     if path!=[]:
+                        print("WARNING: "+source_fun_name+" used "+child_fun_name+" recursive issue")
                         print(path)
                 
                 if child not in visited:

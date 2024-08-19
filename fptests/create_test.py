@@ -20,10 +20,7 @@ def restart_marker():
     
 
 def write_beginning():
-    if attach_to=="freplace/print":
-        f.write("#include \"/home/priya/libbpf-bootstrap/vmlinux/vmlinux.h\"\n")
-    else:
-        f.write("#include \"vmlinux.h\"\n")
+    f.write("#include \"vmlinux.h\"\n")
     f.write("#include <linux/version.h>\n")
     f.write("#include <bpf/bpf_helpers.h>\n")
     f.write("#include <bpf/bpf_tracing.h>\n")

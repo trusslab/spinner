@@ -263,482 +263,156 @@ function_list_helpers = {
 }
 
 function_list_array = {
-        "array_map_meta_equal" : "P",
-        "array_map_alloc_check" : "P",
-        "array_map_alloc" : "P",
-        "array_map_free" : "P",
-        "array_map_get_next_key" : "P",
-        "array_map_free_timers" : "P",
         "array_map_lookup_elem" : "NMI",
         "array_map_update_elem" : "NMI",
         "array_map_delete_elem" : "NMI",
-        "array_map_gen_lookup" : "P",
-        "array_map_direct_value_addr" : "P",
-        "array_map_direct_value_meta" : "P",
-        "array_map_mmap" : "P",
-        "array_map_seq_show_elem" : "P",
-        "array_map_check_btf" : "P",
-        "generic_map_lookup_batch" : "P",
-        "generic_map_update_batch" : "P",
-        "map_set_for_each_callback_args" : "P",
-        "bpf_for_each_array_elem" : "P",
-        "array_map_mem_usage" : "P"
+        "bpf_for_each_array_elem" : "NMI",
         }
         
+
 function_list_percpu_array = {
-        "bpf_map_meta_equal" : "P",
-        "array_map_alloc_check" : "P",
-        "array_map_alloc" : "P",
-        "array_map_free" : "P",
-        "array_map_get_next_key" : "P",
         "percpu_array_map_lookup_elem" : "NMI",
         "array_map_update_elem" : "NMI",
         "array_map_delete_elem" : "NMI",
         "percpu_array_map_lookup_percpu_elem" : "NMI",
-        "percpu_array_map_seq_show_elem" : "P",
-        "array_map_check_btf" : "P",
-        "generic_map_lookup_batch" : "P",
-        "generic_map_update_batch" : "P",
-        "map_set_for_each_callback_args" : "P",
         "bpf_for_each_array_elem" : "NMI",
-        "array_map_mem_usage" : "P"
-        }
-
-function_list_prog_array = {
-        "fd_array_map_alloc_check" : "P",
-        "prog_array_map_alloc" : "P",
-        "prog_array_map_free" : "P",
-        "prog_array_map_poke_track" : "P",
-        "prog_array_map_poke_untrack" : "P",
-        "prog_array_map_poke_run" : "P",
-        "array_map_get_next_key" : "P",
-        "fd_array_map_lookup_elem" : "P",
-        "fd_array_map_delete_elem" : "P",
-        "prog_fd_array_get_ptr" : "P",
-        "prog_fd_array_put_ptr" : "P",
-        "prog_fd_array_sys_lookup_elem" : "P",
-        "prog_array_map_clear" : "P",
-        "prog_array_map_seq_show_elem" : "P",
-        "array_map_mem_usage" : "P",
         }
 
 function_list_perf_event_array = {
-        "bpf_map_meta_equal" : "P",
-        "fd_array_map_alloc_check" : "P",
-        "array_map_alloc" : "P",
-        "perf_event_fd_array_map_free" : "P",
-        "array_map_get_next_key" : "P",
-        "fd_array_map_lookup_elem" : "P",
-        "fd_array_map_delete_elem" : "P",
-        "perf_event_fd_array_get_ptr" : "P",
-        "perf_event_fd_array_put_ptr" : "P",
-        "perf_event_fd_array_release" : "P",
-        "map_check_no_btf" : "P",
-        "array_map_mem_usage" : "P",        
         }
 
 function_list_cgroup_array = {
-        "bpf_map_meta_equal" : "P",
-        "fd_array_map_alloc_check" : "P",
-        "array_map_alloc" : "P",
-        "cgroup_fd_array_free" : "P",
-        "array_map_get_next_key" : "P",
-        "fd_array_map_lookup_elem" : "P",
-        "fd_array_map_delete_elem" : "P",
-        "cgroup_fd_array_get_ptr" : "P",
-        "cgroup_fd_array_put_ptr" : "P",
-        "map_check_no_btf" : "P",
-        "array_map_mem_usage" : "P",
+        }
+
+function_list_prog_array = {
         }
 
 function_list_array_of_maps = {
-        "fd_array_map_alloc_check" : "P",
-        "array_of_map_alloc" : "P",
-        "array_of_map_free" : "P",
-        "array_map_get_next_key" : "P",
         "array_of_map_lookup_elem" : "NMI",
-        "fd_array_map_delete_elem" : "P",
-        "bpf_map_fd_get_ptr" : "P",
-        "bpf_map_fd_put_ptr" : "P",
-        "bpf_map_fd_sys_lookup_elem" : "P",
-        "array_of_map_gen_lookup" : "P",
-        "generic_map_lookup_batch" : "P",
-        "generic_map_update_batch" : "P",
-        "map_check_no_btf" : "P",
-        "array_map_mem_usage" : "P"
         }
 
 function_list_bloom_filter = {
-        "bpf_map_meta_equal" : "P",
-        "bloom_map_alloc" : "P",
-        "bloom_map_free" : "P",
-        "bloom_map_get_next_key" : "P",
         "bloom_map_push_elem" : "NMI",
         "bloom_map_peek_elem" : "NMI",
-        "bloom_map_pop_elem" : "P",
-        "bloom_map_lookup_elem" : "P",
-        "bloom_map_update_elem" : "P",
-        "bloom_map_delete_elem" : "P",
-        "bloom_map_check_btf" : "P",
-        "bloom_map_mem_usage" : "P",
         }
 
 function_list_htab = {
-        "bpf_map_meta_equal" : "P",
-        "htab_map_alloc_check" : "P",
-        "htab_map_alloc" : "P",
-        "htab_map_free" : "P",
-        "htab_map_get_next_key" : "P",
-        "htab_map_free_timers" : "P",
         "htab_map_lookup_elem" : "NMI",
-        "htab_map_lookup_and_delete_elem" : "P",
         "htab_map_update_elem" : "NMI",
         "htab_map_delete_elem" : "NMI",
-        "htab_map_gen_lookup" : "P",
-        "htab_map_seq_show_elem" : "P",
-        "map_set_for_each_callback_args" : "P",
-        "bpf_for_each_hash_elem" : "P",
-        "htab_map_mem_usage" : "P"
+        "bpf_for_each_hash_elem" : "NMI",
         }
 
 function_list_htab_lru = {
-        "bpf_map_meta_equal" : "P",
-        "htab_map_alloc_check" : "P",
-        "htab_map_alloc" : "P",
-        "htab_map_free" : "P",
-        "htab_map_get_next_key" : "P",
-        "htab_map_free_timers" : "P",
         "htab_lru_map_lookup_elem" : "NMI",
-        "htab_lru_map_lookup_and_delete_elem" : "P",
-        "htab_lru_map_lookup_elem_sys" : "NMI",
         "htab_lru_map_update_elem" : "NMI",
         "htab_lru_map_delete_elem" : "NMI",
-        "htab_lru_map_gen_lookup" : "P",
-        "htab_map_seq_show_elem" : "P",
-        "map_set_for_each_callback_args" : "P",
-        "bpf_for_each_hash_elem" : "P",
-        "htab_map_mem_usage" : "P",
+        "bpf_for_each_hash_elem" : "NMI",
         }
 
 function_list_htab_percpu = {
-        "bpf_map_meta_equal" : "P",
-        "htab_map_alloc_check" : "P",
-        "htab_map_alloc" : "P",
-        "htab_map_free" : "P",
-        "htab_map_get_next_key" : "P",
         "htab_percpu_map_lookup_elem" : "NMI",
-        "htab_percpu_map_lookup_and_delete_elem" : "P",
         "htab_percpu_map_update_elem" : "NMI",
         "htab_map_delete_elem" : "NMI",
         "htab_percpu_map_lookup_percpu_elem" : "NMI",
-        "htab_percpu_map_seq_show_elem" : "P",
-        "map_set_for_each_callback_args" : "P",
-        "bpf_for_each_hash_elem" : "P",
-        "htab_map_mem_usage" : "P"
+        "bpf_for_each_hash_elem" : "NMI",
         }
 
 function_list_htab_lru_percpu = {
-        "bpf_map_meta_equal" : "P",
-        "htab_map_alloc_check" : "P",
-        "htab_map_alloc" : "P",
-        "htab_map_free" : "P",
-        "htab_map_get_next_key" : "P",
         "htab_lru_percpu_map_lookup_elem" : "NMI",
-        "htab_lru_percpu_map_lookup_and_delete_elem" : "P",
         "htab_lru_percpu_map_update_elem" : "NMI",
         "htab_lru_map_delete_elem" : "NMI",
         "htab_lru_percpu_map_lookup_percpu_elem" : "NMI",
-        "htab_percpu_map_seq_show_elem" : "P",
-        "map_set_for_each_callback_args" : "P",
-        "bpf_for_each_hash_elem" : "P",
-        "htab_map_mem_usage" : "P"
+        "bpf_for_each_hash_elem" : "NMI",
         }
 
 function_list_htab_of_maps = {
-        "fd_htab_map_alloc_check" : "P",
-        "htab_of_map_alloc" : "P",
-        "htab_of_map_free" : "P",
-        "htab_map_get_next_key" : "P",
         "htab_of_map_lookup_elem" : "NMI",
-        "htab_map_delete_elem" : "P",
-        "bpf_map_fd_get_ptr" : "P",
-        "bpf_map_fd_put_ptr" : "P",
-        "bpf_map_fd_sys_lookup_elem" : "P",
-        "htab_of_map_gen_lookup" : "P",
-        "map_check_no_btf" : "P",
-        "htab_map_mem_usage" : "P"
         }
 
 function_list_stack_trace = { 
-        "bpf_map_meta_equal" : "P",
-        "stack_map_alloc" : "P",
-        "stack_map_free" : "P",
-        "stack_map_get_next_key" : "P",
-        "stack_map_lookup_elem" : "P",
-        "stack_map_update_elem" : "P",
-        "stack_map_delete_elem" : "P",
-        "map_check_no_btf" : "P",
-        "stack_map_mem_usage" : "P"
         }
 
 function_list_trie = {
-        "bpf_map_meta_equal" : "P",
-        "trie_alloc" : "P",
-        "trie_free" : "P",
-        "trie_get_next_key" : "P",
         "trie_lookup_elem" : "NMI",
         "trie_update_elem" : "NMI",
         "trie_delete_elem" : "NMI",
-        "generic_map_lookup_batch" : "P",
-        "generic_map_update_batch" : "P",
-        "generic_map_delete_batch" : "P",
-        "trie_check_btf" : "P",
-        "trie_mem_usage" : "P"
         }
 
 function_list_dev = {
-        "bpf_map_meta_equal" : "P",
-        "dev_map_alloc" : "P",
-        "dev_map_free" : "P",
-        "dev_map_get_next_key" : "P",
         "dev_map_lookup_elem" : "S",
-        "dev_map_update_elem" : "P",
-        "dev_map_delete_elem" : "P",
-        "map_check_no_btf" : "P",
-        "dev_map_mem_usage" : "P",
         "dev_map_redirect" : "S"
         }
 
 function_list_dev_hash = {
-        "bpf_map_meta_equal" : "P",
-        "dev_map_alloc" : "P",
-        "dev_map_free" : "P",
-        "dev_map_hash_get_next_key" : "P",
         "dev_map_hash_lookup_elem" : "S",
-        "dev_map_hash_update_elem" : "P",
-        "dev_map_hash_delete_elem" : "P",
-        "map_check_no_btf" : "P",
-        "dev_map_mem_usage" : "P",
-        "dev_hash_map_redirect" : "P",
+        "dev_hash_map_redirect" : "S",
         }
 
 function_list_sock = {
-        "bpf_map_meta_equal" : "P",
-        "sock_map_alloc" : "P",
-        "sock_map_free" : "P",
-        "sock_map_get_next_key" : "P",
-        "sock_map_lookup_sys" : "S",
         "sock_map_update_elem" : "S",
         "sock_map_delete_elem" : "S",
-        "sock_map_lookup" : "P",
-        "sock_map_release_progs" : "P",
-        "map_check_no_btf" : "P",
-        "sock_map_mem_usage" : "P"
+        "sock_map_lookup" : "S",
         }
 
 function_list_sock_hash = {
-        "sock_hash_delete_elem" : "H",
-        "sock_map_update_elem" : "H",
-        "bpf_sock_hash_update" : "S",
-        "bpf_msg_redirect_hash" : "H",
-        "bpf_sk_redirect_hash" : "H",
-        "bpf_map_meta_equal" : "P",
-        "sock_hash_alloc" : "P",
-        "sock_hash_free" : "S",
-        "sock_hash_get_next_key" : "P",
-        "sock_hash_lookup" : "P",
-        "sock_hash_lookup_sys" : "P",
-        "sock_hash_release_progs" : "P",
-        "map_check_no_btf" : "P",
-        "sock_hash_bucket_hash" : "P",
-        "sock_hash_select_bucket" : "P",
-        "__sock_hash_lookup_elem" : "H",
-        "sock_hash_delete_from_link" : "P",
-        "sock_hash_update_common" : "H",
-        "sock_hash_seq_find_next" : "P"
+        "sock_hash_delete_elem" : "S",
+        "sock_map_update_elem" : "S",
+        "sock_hash_lookup" : "S",
         }
 
 function_list_cpu = {
-        "bpf_map_meta_equal" : "P",
-        "cpu_map_alloc" : "P",
-        "cpu_map_free" : "P",
-        "cpu_map_delete_elem" : "P",
-        "cpu_map_update_elem" : "P",
-        "cpu_map_lookup_elem" : "P",
-        "cpu_map_get_next_key" : "P",
-        "map_check_no_btf" : "P",
-        "cpu_map_mem_usage" : "P",
-        "cpu_map_redirect" : "S",
+        "cpu_map_redirect" : "S"
         }
 
 function_list_xsk = {
-        "xsk_map_meta_equal" : "P",
-        "xsk_map_alloc" : "P",
-        "xsk_map_free" : "P",
-        "xsk_map_get_next_key" : "P",
         "xsk_map_lookup_elem" : "S",
-        "xsk_map_gen_lookup" : "P",
-        "xsk_map_lookup_elem_sys_only" : "P",
-        "xsk_map_update_elem" : "P",
-        "xsk_map_delete_elem" : "P",
-        "map_check_no_btf" : "P",
-        "xsk_map_mem_usage" : "P",
-        "xsk_map_redirect" : "S"
         }
 
 function_list_reuseport_array = {
-        "bpf_map_meta_equal" : "P",
-        "reuseport_array_alloc_check" : "P",
-        "reuseport_array_alloc" : "P",
-        "reuseport_array_free" : "P",
-        "reuseport_array_lookup_elem" : "P",
-        "reuseport_array_get_next_key" : "P",
-        "reuseport_array_delete_elem" : "P",
-        "reuseport_array_mem_usage" : "P"
         }
 
 function_list_stack = {
-        "bpf_map_meta_equal" : "P",
-        "queue_stack_map_alloc_check" : "P",
-        "queue_stack_map_alloc" : "P",
-        "queue_stack_map_free" : "P",
-        "queue_stack_map_lookup_elem" : "P",
-        "queue_stack_map_update_elem" : "P",
-        "queue_stack_map_delete_elem" : "P",
         "queue_stack_map_push_elem" : "NMI",
         "stack_map_pop_elem" : "NMI",
         "stack_map_peek_elem" : "NMI",
-        "queue_stack_map_get_next_key" : "P",
-        "queue_stack_map_mem_usage" : "P"
         }
 
 function_list_queue = {
-        "bpf_map_meta_equal" : "P",
-        "queue_stack_map_alloc_check" : "P",
-        "queue_stack_map_alloc" : "P",
-        "queue_stack_map_free" : "P",
-        "queue_stack_map_lookup_elem" : "P",
-        "queue_stack_map_update_elem" : "P",
-        "queue_stack_map_delete_elem" : "P",
         "queue_stack_map_push_elem" : "NMI",
         "queue_map_pop_elem" : "NMI",
         "queue_map_peek_elem" : "NMI",
-        "queue_stack_map_get_next_key" : "P",
 }
 
 function_list_sk_storage = {
-        "bpf_map_meta_equal" : "P",
-        "bpf_local_storage_map_alloc_check" : "P",
-        "bpf_sk_storage_map_alloc" : "P",
-        "bpf_sk_storage_map_free" : "P",
-        "notsupp_get_next_key" : "P",
-        "bpf_fd_sk_storage_lookup_elem" : "P",
-        "bpf_fd_sk_storage_update_elem" : "P",
-        "bpf_fd_sk_storage_delete_elem" : "P",
-        "bpf_local_storage_map_check_btf" : "P",
-        "bpf_sk_storage_charge" : "P",
-        "bpf_sk_storage_uncharge" : "P",
-        "bpf_sk_storage_ptr" : "P",
-        "bpf_local_storage_map_mem_usage" : "P"
         }
 
 function_list_struct_ops = {
-        "bpf_struct_ops_map_alloc_check" : "P",
-        "bpf_struct_ops_map_alloc" : "P",
-        "bpf_struct_ops_map_free" : "P",
-        "bpf_struct_ops_map_get_next_key" : "P",
-        "bpf_struct_ops_map_lookup_elem" : "P",
-        "bpf_struct_ops_map_delete_elem" : "P",
-        "bpf_struct_ops_map_update_elem" : "P",
-        "bpf_struct_ops_map_seq_show_elem" : "P",
-        "bpf_struct_ops_map_mem_usage" : "P"
         }
 
 function_list_ringbuf = {
-        "bpf_map_meta_equal" : "P",
-        "ringbuf_map_alloc" : "P",
-        "ringbuf_map_free" : "P",
-        "ringbuf_map_mmap_kern" : "P",
-        "ringbuf_map_poll_kern" : "P",
-        "ringbuf_map_lookup_elem" : "P",
-        "ringbuf_map_update_elem" : "P",
-        "ringbuf_map_delete_elem" : "P",
-        "ringbuf_map_get_next_key" : "P",
-        "ringbuf_map_mem_usage" : "P"
+        "ringbuf_map_lookup_elem" : "NMI",
+        "ringbuf_map_update_elem" : "NMI",
+        "ringbuf_map_delete_elem" : "NMI",
         }
 
 function_list_inode_storage = {
-        "bpf_map_meta_equal" : "P",
-        "bpf_local_storage_map_alloc_check" : "P",
-        "inode_storage_map_alloc" : "P",
-        "inode_storage_map_free" : "P",
-        "notsupp_get_next_key" : "P",
-        "bpf_fd_inode_storage_lookup_elem" : "P",
-        "bpf_fd_inode_storage_update_elem" : "P",
-        "bpf_fd_inode_storage_delete_elem" : "P",
-        "bpf_local_storage_map_check_btf" : "P",
-        "bpf_local_storage_map_mem_usage" : "P",
-        "inode_storage_ptr" : "P"
         }
 
 function_list_task_storage = {
-        "bpf_map_meta_equal" : "P",
-        "bpf_local_storage_map_alloc_check" : "P",
-        "task_storage_map_alloc" : "P",
-        "task_storage_map_free" : "P",
-        "notsupp_get_next_key" : "P",
-        "bpf_pid_task_storage_lookup_elem" : "P",
-        "bpf_pid_task_storage_update_elem" : "P",
-        "bpf_pid_task_storage_delete_elem" : "P",
-        "bpf_local_storage_map_check_btf" : "P",
-        "bpf_local_storage_map_mem_usage" : "P",
-        "task_storage_ptr" : "P"
         }
 
 function_list_user_ringbuf = {
-        "bpf_map_meta_equal" : "P", 
-        "ringbuf_map_alloc" : "P",
-        "ringbuf_map_free" : "P",
-        "ringbuf_map_mmap_user" : "P",
-        "ringbuf_map_poll_user" : "P",
-        "ringbuf_map_lookup_elem" : "P",
-        "ringbuf_map_update_elem" : "P",
-        "ringbuf_map_delete_elem" : "P",
-        "ringbuf_map_get_next_key" : "P",
-        "ringbuf_map_mem_usage" : "P"
         }
 
 
 function_list_cgrp_storage = {
-        "bpf_map_meta_equal" : "P",
-        "bpf_local_storage_map_alloc_check" : "P",
-        "cgroup_storage_map_alloc" : "P",
-        "cgroup_storage_map_free" : "P",
-        "notsupp_get_next_key" : "P",
-        "bpf_cgrp_storage_lookup_elem" : "P",
-        "bpf_cgrp_storage_update_elem" : "P",
-        "bpf_cgrp_storage_delete_elem" : "P",
-        "bpf_local_storage_map_check_btf" : "P",
-        "bpf_local_storage_map_mem_usage" : "P",
-        "cgroup_storage_ptr" : "P"
         }
 
 function_list_arena = {
-        "bpf_map_meta_equal" : "P",
-        "arena_map_alloc" : "P",
-        "arena_map_free" : "P",
-        "arena_map_direct_value_addr" : "P",
-        "arena_map_mmap" : "P",
-        "arena_get_unmapped_area" : "P",
-        "arena_map_get_next_key" : "P",
         "arena_map_push_elem" : "NMI",
         "arena_map_peek_elem" : "NMI",
         "arena_map_pop_elem" : "NMI",
-        "arena_map_lookup_elem" : "P",
-        "arena_map_update_elem" : "P",
-        "arena_map_delete_elem" : "P",
-        "arena_map_check_btf" : "P",
-        "arena_map_mem_usage" : "P",
         }
 
 kfunc_list = {
