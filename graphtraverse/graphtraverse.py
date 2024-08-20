@@ -1,8 +1,12 @@
 import networkx as nx
 import json
+from graph_nodes import get_nodes
 
 callgraph_file_name = input("Enter .dot file name:")
-node_file_name = input("Enter .json file name:")
+node_file_name = "nodes.json"
+get_nodes(callgraph_file_name)
+print("hello")
+
 callgraph_linux = nx.drawing.nx_agraph.read_dot(callgraph_file_name)
 print("networkx graph created")
 

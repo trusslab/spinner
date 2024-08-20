@@ -1,9 +1,6 @@
-import os
 import re
 import subprocess
 
-result_file = open('helper-progtype.txt','a')
-utypes = ['u8', 'u16', 'u32', 'u64', 's8', 's16', 's32', 's64']
 
 def write_params(insert_line, params):
     if len(params)==1 and  params[0]=="void":
@@ -148,51 +145,56 @@ def run():
 def restart_marker():
     marker.write("* Start of BPF helper function descriptions:")
 
-for i in range(216):
 
-    helper_file = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/bpf.h", "r")
-    marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "r")
+def test_struct_ops():
+    result_file = open('helper-progtype.txt','a')
+    utypes = ['u8', 'u16', 'u32', 'u64', 's8', 's16', 's32', 's64']
 
-    marker_fn = marker.read()
-    marker.close()
+    for i in range(216):
 
-    marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "w")
-    read_start = False
-    write_marker = False
+        helper_file = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/bpf.h", "r")
+        marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "r")
 
-    while(True):
-        line = helper_file.readline()
-        if not line:
-            break
+        marker_fn = marker.read()
+        marker.close()
 
-        if marker_fn in line:   #found where we stopped last time
-            read_start = True
-            write_marker = True
-            continue
+        marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "w")
+        read_start = False
+        write_marker = False
 
-        if "*/" in line and read_start == True:    #end of all function defs
-            restart_marker()
-            read_start = False
-            continue
+        while(True):
+            line = helper_file.readline()
+            if not line:
+                break
 
-        if read_start==True and re.search("^ [*] ([a-z]|[A-Z]|[_])", line):         #next fn def
-            if write_marker:            #need to keep track of where we ended
-                marker.write(line)
-                write_marker = False
-                helper_fn = parse_and_write_to_cubic(line)
+            if marker_fn in line:   #found where we stopped last time
+                read_start = True
+                write_marker = True
+                continue
+
+            if "*/" in line and read_start == True:    #end of all function defs
+                restart_marker()
+                read_start = False
+                continue
+
+            if read_start==True and re.search("^ [*] ([a-z]|[A-Z]|[_])", line):         #next fn def
+                if write_marker:            #need to keep track of where we ended
+                    marker.write(line)
+                    write_marker = False
+                    helper_fn = parse_and_write_to_cubic(line)
                 
-                if not helper_fn:
-                    break
+                    if not helper_fn:
+                        break
 
-                program_type = 'struct_ops'
-                result_file.write(f"{helper_fn:<40}")
-                result_file.write(f"{program_type:<40}")
+                    program_type = 'struct_ops'
+                    result_file.write(f"{helper_fn:<40}")
+                    result_file.write(f"{program_type:<40}")
                 
-                make()
-                run()
+                    make()
+                    run()
 
-            break
-    helper_file.close()
-    marker.close()
+                break
+        helper_file.close()
+        marker.close()
 
-result_file.close()
+    result_file.close()

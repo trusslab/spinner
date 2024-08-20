@@ -1,5 +1,7 @@
-import os
 import subprocess
+from create_test import create_test
+from compile_results import compile_results
+from test_struct_ops import test_struct_ops
 
 result_file = open('output/helper-progtype.txt','w')
 result_file.write(f"{'function_name':<40}{'program_type':<40}{'compile error':<20}{'compile warning':<20}{'allowed'}\n")
@@ -25,7 +27,7 @@ for program_type in program_types:
     prog_type_file.close()
     
     for i in range(216):
-        os.system('python3 create_test.py')
+        create_test()
         test_helper_fn = ''
         result_line = ''
 
@@ -98,3 +100,5 @@ for program_type in program_types:
         
 
 result_file.close()
+test_struct_ops()
+compile_results()

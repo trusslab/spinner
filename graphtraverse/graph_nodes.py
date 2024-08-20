@@ -572,33 +572,30 @@ function_lists = [function_list_helpers, function_list_array, function_list_perc
 node_list = {}
 
 
-graph_file_name = input("Enter .txt file to read from: ")
-graph_file = open(graph_file_name, 'r')
+def get_nodes(graph_file_name):
+    graph_file = open(graph_file_name, 'r')
 
-json_file_name = input("Enter .json file name to write to: ")
-
-target = "trie_delete_elem"
-
-for list in function_lists:
-    for key in list:
-        flag = False
-        while True:
-            line = graph_file.readline()
-            #print(line)
-            if not line:
-                break
-            #if key in line and key==line[line.index("fun:")+5 : line.rindex("\\")]: ##for SVF gen callgraphs
-            if key in line and key==line[line.index("fun:")+5 : line.rindex("}")]:  ##for mlta gen callgraphs
-                flag = True
-                #node_list[line[1:19]]=list[key] ##for SVF gen callgraphs
-                node_list[line[:line.index("[")-1]]=list[key] ##for mlta gen callgraphs
-        if flag==False:
-            print("Node matching "+key+" not found.")
-        graph_file.seek(0)
+    for list in function_lists:
+        for key in list:
+            flag = False
+            while True:
+                line = graph_file.readline()
+                #print(line)
+                if not line:
+                    break
+                #if key in line and key==line[line.index("fun:")+5 : line.rindex("\\")]: ##for SVF gen callgraphs
+                if key in line and key==line[line.index("fun:")+5 : line.rindex("}")]:  ##for mlta gen callgraphs
+                    flag = True
+                    #node_list[line[1:19]]=list[key] ##for SVF gen callgraphs
+                    node_list[line[:line.index("[")-1]]=list[key] ##for mlta gen callgraphs
+            if flag==False:
+                print("Node matching "+key+" not found.")
+            graph_file.seek(0)
             
 
 
-json_object = json.dumps(node_list)
+    json_object = json.dumps(node_list)
 
-with open(json_file_name, "w") as outfile:
-    outfile.write(json_object)
+    with open('nodes.json', "w") as outfile:
+        outfile.write(json_object)
+
