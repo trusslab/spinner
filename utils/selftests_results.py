@@ -25,7 +25,7 @@ for line in lines:
         second_type = attach_type.split('/')[1]
     prog_type = prog_type.replace('?', '')
     prog_type = ''.join([i for i in prog_type if not i.isdigit()])
-    with_second_type = ['cgroup', 'sk_reuseport', 'sk_skb', 'xdp', 'xdp.frags']
+    with_second_type = ['cgroup', 'cgroup_skb', 'sk_reuseport', 'sk_skb', 'xdp', 'xdp.frags']
     if prog_type in with_second_type and second_type!='':
         prog_type+='/'
         prog_type+=second_type

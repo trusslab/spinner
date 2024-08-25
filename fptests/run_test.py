@@ -6,11 +6,15 @@ from test_struct_ops import test_struct_ops
 result_file = open('output/helper-progtype.txt','w')
 result_file.write(f"{'function_name':<40}{'program_type':<40}{'compile error':<20}{'compile warning':<20}{'allowed'}\n")
 
-program_types = ['cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ingress', 'cgroup/getsockopt', 'cgroup/setsockopt', 'cgroup/bind4',
-        'cgroup/bind6', 'cgroup/connect6', 'cgroup/getpeername6', 'cgroup/getsockname6', 'cgroup/recvmsg4', 'cgroup/sendmsg4', 'cgroup/recvmsg6',
+program_types = ['kprobe', 'kretprobe']
+'''
+['cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ingress', 'cgroup/getsockopt', 'cgroup/setsockopt', 'cgroup/bind4',
+        'cgroup/bind6', 'cgroup/connect4', 'cgroup/connect6', 'cgroup/getpeername4', 'cgroup/getpeername6', 'cgroup/getsockname4', 'cgroup/getsockname6', 
+        'cgroup/recvmsg4', 'cgroup/sendmsg4', 'cgroup/recvmsg6',
         'cgroup/sendmsg6', 'cgroup/connect_unix', 'cgroup/sendmsg_unix', 'cgroup/recvmsg_unix', 'cgroup/getpeername_unix', 'cgroup/getsockname_unix', 
         'cgroup/post_bind4', 'cgroup/post_bind6', 'cgroup/sock_create', 'cgroup/sock', 'cgroup/sock_release', 'cgroup/sysctl',  
-        'flow_dissector', 'kprobe', 'kretprobe', 'ksyscall', 'kretsyscall', 'uprobe', 'uprobe.s', 'uretprobe', 'uretprobe.s', 'usdt', 'kprobe.multi', 
+        'flow_dissector', 'kprobe/do_nanosleep', 'kretprobe/do_nanosleep', 'ksyscall/getgid', 'kretsyscall/getgid', 'uprobe//proc/self/exe:target_1', 
+        'uprobe.s', 'uretprobe//proc/self/exe:target_1', 'uretprobe.s', 'usdt', 'kprobe.multi', 
         'kretprobe.multi', 'lirc_mode2', 'lsm_cgroup/socket_bind', 'lsm/task_free', 'lsm.s/bpf', 'lwt_in', 'lwt_out', 'lwt_seg6local', 
         'lwt_xmit', 'perf_event', 'raw_tp.w', 'raw_tracepoint.w', 'raw_tp', 'raw_tracepoint', 'action', 'classifier', 'tc', 'sk_lookup', 'sk_msg', 
         'sk_reuseport/migrate', 'sk_reuseport', 'sk_skb', 'sk_skb/stream_parser', 'sk_skb/stream_verdict', 'socket', 'sockops', 'syscall',
@@ -18,7 +22,7 @@ program_types = ['cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ing
         'fentry.s/bpf_fentry_test1',
         'fexit/do_nanosleep', 'fexit.s/bpf_fentry_test1', 'freplace/print', 'iter/tcp', 'iter.s/cgroup', 'tp_btf/task_newtask', 'xdp.frags/cpumap', 
         'xdp/cpumap', 'xdp.frags/devmap', 'xdp/devmap', 'xdp', 'xdp.frags']
-
+'''
 
 for program_type in program_types:
 

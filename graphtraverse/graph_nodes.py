@@ -1,5 +1,6 @@
 import json
-
+from helper_context import helper_context
+'''
 function_list_helpers = {
         "bpf_xdp_get_buff_len" : "NMI",
         "__bpf_setsockopt" : "S",
@@ -261,6 +262,7 @@ function_list_helpers = {
         "bpf_cgrp_storage_get" : "NMI",
         "bpf_cgrp_storage_delete" : "NMI"
 }
+'''
 
 function_list_array = {
         "array_map_lookup_elem" : "NMI",
@@ -563,7 +565,7 @@ kfunc_list = {
         "bpf_xdp_xfrm_state_release" : "S",
         }
 
-function_lists = [function_list_helpers, function_list_array, function_list_percpu_array, function_list_prog_array, function_list_perf_event_array, 
+function_lists = [function_list_array, function_list_percpu_array, function_list_prog_array, function_list_perf_event_array, 
         function_list_cgroup_array, function_list_array_of_maps, function_list_bloom_filter, function_list_htab, function_list_htab_lru, 
         function_list_htab_percpu, function_list_htab_lru_percpu , function_list_htab_of_maps, function_list_stack_trace, function_list_trie,
         function_list_dev, function_list_dev_hash, function_list_sock, function_list_sock_hash, function_list_cpu, function_list_xsk,
@@ -574,6 +576,10 @@ node_list = {}
 
 def get_nodes(graph_file_name):
     graph_file = open(graph_file_name, 'r')
+
+    function_list_helpers = helper_context();
+    function_lists.append(function_list_helpers)
+
 
     for list in function_lists:
         for key in list:

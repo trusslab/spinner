@@ -1,6 +1,7 @@
 import re
 import subprocess
 
+utypes = ['u8', 'u16', 'u32', 'u64', 's8', 's16', 's32', 's64']
 
 def write_params(insert_line, params):
     if len(params)==1 and  params[0]=="void":
@@ -106,7 +107,7 @@ def parse_and_write_to_cubic(line):
 
 
 
-def make():
+def make(result_file):
     make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/home/priya/linux-6.9/tools/testing/selftests/bpf/', '-c', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c', '-o', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.bpf.o']
     make_file = open("make_result.txt", 'w')
     subprocess.call(make_command, stderr=make_file,  shell=False)
@@ -124,7 +125,7 @@ def make():
         result_file.write(f"{'no':<20}")
     make_file.close()
 
-def run():
+def run(result_file):
     run_command = ['bpftool', 'struct_ops', 'register', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.bpf.o']
     run_file = open("run_result.txt", "w")
     subprocess.call(run_command, stderr=run_file, shell=False)
@@ -142,23 +143,22 @@ def run():
     subprocess.call(unregister_command, shell=False)
 
 
-def restart_marker():
+def restart_marker(marker):
     marker.write("* Start of BPF helper function descriptions:")
 
 
 def test_struct_ops():
-    result_file = open('helper-progtype.txt','a')
-    utypes = ['u8', 'u16', 'u32', 'u64', 's8', 's16', 's32', 's64']
-
+    result_file = open('output/helper-progtype.txt','a')
+    
     for i in range(216):
 
-        helper_file = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/bpf.h", "r")
-        marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "r")
+        helper_file = open("bpf.h", "r")
+        marker = open("output/marker.txt", "r")
 
         marker_fn = marker.read()
         marker.close()
 
-        marker = open("/home/priya/libbpf-bootstrap/examples/c/create_tests/marker.txt", "w")
+        marker = open("output/marker.txt", "w")
         read_start = False
         write_marker = False
 
@@ -173,7 +173,7 @@ def test_struct_ops():
                 continue
 
             if "*/" in line and read_start == True:    #end of all function defs
-                restart_marker()
+                restart_marker(marker)
                 read_start = False
                 continue
 
@@ -190,8 +190,8 @@ def test_struct_ops():
                     result_file.write(f"{helper_fn:<40}")
                     result_file.write(f"{program_type:<40}")
                 
-                    make()
-                    run()
+                    make(result_file)
+                    run(result_file)
 
                 break
         helper_file.close()
