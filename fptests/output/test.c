@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
 	struct bpf_link *link = bpf_program__attach(prog);
         if (!link) {
-                fprintf(stderr, "Error attaching to print_address_i8\n");
+                fprintf(stderr, "Error attaching\n");
                 return 1;
         }
 

@@ -36,8 +36,8 @@ int main(int argc, char **argv)
         signal(SIGINT, sig_handler);
         signal(SIGTERM, sig_handler);
 	
-	const char *obj_file = ".output/test.bpf.o";
-	const char *target_obj_file = "freplace2.bpf.o";
+	const char *obj_file = "output/test.bpf.o";
+	const char *target_obj_file = "output/freplace2.bpf.o";
 	
 	struct bpf_object *obj = bpf_object__open_file(obj_file, NULL);
 	if (!obj) 

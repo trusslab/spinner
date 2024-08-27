@@ -23,7 +23,8 @@ def write_beginning(f, attach_to):
     f.write("#include <linux/version.h>\n")
     f.write("#include <bpf/bpf_helpers.h>\n")
     f.write("#include <bpf/bpf_tracing.h>\n")
-
+    f.write("#include <bpf/bpf_core_read.h>\n")
+    f.write("#include <usdt.bpf.h>\n")
     f.write("char LICENSE[] SEC(\"license\") = \"Dual BSD/GPL\";\n")
 
     f.write("SEC(\""+attach_to+"\")\n")
