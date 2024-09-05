@@ -17,7 +17,7 @@ def transform_context(type_context):
 
 
 def helper_context():
-    with open('../fptests/output/helper-progtype-copy.json', 'r') as file:
+    with open('../fptests/output/helper-progtype.json', 'r') as file:
        helper_progtype = json.load(file)
     with open('../utils/output/prog_type-context.json', 'r') as file:
         progtype_context = json.load(file)
@@ -27,14 +27,17 @@ def helper_context():
     for helper in helper_progtype:
         context = ''
         for progtype in progtype_context:
-            if progtype not in helper_progtype[helper][0] and progtype not in helper_progtype[helper][1]:
-                print(progtype+" not in dynamic analysis")
             if progtype in helper_progtype[helper][0]:
                 if context=='':
                     context = progtype_context[progtype]
                 if context_hierarchy[progtype_context[progtype]]>context_hierarchy[context]:
                     context = progtype_context[progtype]
         helper_context[helper] = context
+        
+    for progtype in helper_progtype['bpf_map_update_elem'][0]:
+        if progtype not in progtype_context:
+            print(progtype+" not in dynamic analysis")
+   
 
     print(helper_context)
     return helper_context

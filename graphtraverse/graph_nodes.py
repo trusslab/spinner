@@ -1,7 +1,7 @@
 import json
 from helper_context import helper_context
-'''
-function_list_helpers = {
+
+function_list_helpers_1 = {
         "bpf_xdp_get_buff_len" : "NMI",
         "__bpf_setsockopt" : "S",
         "bpf_tcp_sock" : "S",
@@ -262,7 +262,6 @@ function_list_helpers = {
         "bpf_cgrp_storage_get" : "NMI",
         "bpf_cgrp_storage_delete" : "NMI"
 }
-'''
 
 function_list_array = {
         "array_map_lookup_elem" : "NMI",
@@ -580,6 +579,10 @@ def get_nodes(graph_file_name):
     function_list_helpers = helper_context();
     function_lists.append(function_list_helpers)
 
+    for function in function_list_helpers:
+        if function not in function_list_helpers_1:
+            print(function+" not tested");
+    
 
     for list in function_lists:
         for key in list:

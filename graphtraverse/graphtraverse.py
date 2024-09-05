@@ -5,7 +5,6 @@ from graph_nodes import get_nodes
 callgraph_file_name = input("Enter .dot file name:")
 node_file_name = "nodes.json"
 get_nodes(callgraph_file_name)
-print("hello")
 
 callgraph_linux = nx.drawing.nx_agraph.read_dot(callgraph_file_name)
 print("networkx graph created")
@@ -150,57 +149,57 @@ def dfs_nx(callgraph, source, max_context):
             irq_disabled = 0
             
             for child in children:
-                warning = 0
+                warning = [False, False]
                 child_fun_name = get_name(callgraph._node[child])
                 parent_map[child_fun_name] = parent_fun_name
                
                 if source_fun_name in get_precur_functions():
                     if (check_NMI(source_fun_name, child_fun_name)):
-                        warning = 2
+                        warning[1] = True
 
                 if "map" in source_fun_name:
                     if (check_NMI(source_fun_name, child_fun_name)):
-                        warning = 2
+                        warning[1] = True
 
                 if max_context=="S":
                     #if not irq_disabled:
                     if (check_S(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_synchronize_rcu(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_sleeping_functions(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if check_sleeping_locks(source_fun_name, child_fun_name):
-                        warning = 1
+                        warning[0] = True
 
                 elif max_context=="H":
                     #if not irq_disabled:
                     if (check_H(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_synchronize_rcu(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_functions(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_locks(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
 
                 elif max_context == "NMI":
                     if (check_NMI(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_synchronize_rcu(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_functions(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_locks(source_fun_name, child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                 
-                if warning == 1:
+                if warning[0] == True:
                     path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
                     if path!=[]:
                         print("WARNING: "+source_fun_name+" used "+child_fun_name)
                         print(path)
 
-                if warning == 2:
+                if warning[1] == True:
                      path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
                      if path!=[]:
                         print("WARNING: "+source_fun_name+" used "+child_fun_name+" recursive issue")

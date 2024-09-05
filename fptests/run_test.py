@@ -47,7 +47,7 @@ for program_type in program_types:
             continue
         result_file.write(f"{test_helper_fn:<40}")
         written_prog_type = program_type
-        dont_strip = ['cgroup','sk_reuseport', 'sk_skb', 'xdp', 'xdp.frags']
+        dont_strip = ['cgroup', 'cgroup_skb','sk_reuseport', 'sk_skb', 'xdp', 'xdp.frags']
         if written_prog_type.split('/')[0] not in dont_strip:
             written_prog_type = written_prog_type.split('/')[0]
         result_file.write(f"{written_prog_type:<40}")

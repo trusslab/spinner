@@ -120,6 +120,7 @@ def SVF_trace_run_functions(graph_file, callgraph):
         #print(run_functions[key])
 
 def mlta_trace_run_functions(graph_file, callgraph):
+    
     no_pred = "__traceiter_initcall_finish"
 
     for key in mlta_run_functions:
@@ -153,33 +154,136 @@ def mlta_trace_run_functions(graph_file, callgraph):
         mlta_run_functions[key].append(pred)
         mlta_run_functions[key].append(pred_names)
         #print(run_functions[key])
+        
+def get_ancestors(graph, SVF):
+    if SVF==True:
+        for key in run_functions:
+            if not run_functions[key]:
+                print(key)
+                continue
+            node = run_functions[key][0]
+            if not node:
+                print(key)
+                continue
+
+            ancestors = nx.ancestors(graph, node)
+            pred = []
+            pred.append(node)
+            pred_names = []
+            pred_names.append(get_name(graph._node[pred[0]], SVF))
+            for ancestor in ancestors:
+                pred.append(ancestor)
+                pred_names.append(get_name(graph._node[ancestor], SVF))
+            run_functions[key].append(pred)
+            run_functions[key].append(pred_names)
+    else:
+        for key in mlta_run_functions:
+            if not mlta_run_functions[key]:
+                print(key)
+                continue
+            node = mlta_run_functions[key][0]
+            if not node:
+                print(key)
+                continue
+
+            ancestors = nx.ancestors(graph, node)
+            pred = []
+            pred.append(node)
+            pred_names = []
+            pred_names.append(get_name(graph._node[pred[0]], SVF))
+            for ancestor in ancestors:
+                pred.append(ancestor)
+                pred_names.append(get_name(graph._node[ancestor], SVF))
+            mlta_run_functions[key].append(pred)
+            mlta_run_functions[key].append(pred_names)
 
 
-SVF_graph_file_name = input("Enter SVF graph file to read: ")
-SVF_graph_file = open(SVF_graph_file_name, 'r')
+def get_possibilities(SVF):
+    possibilities = {}
+    softirq_funcs = ['tasklet_action_common', 'net_tx_action', 'net_rx_action', 'run_timer_softirq']
+    if SVF==True:
+        for function in run_functions:
+            process = []
+            softirq = []
+            hardirq = []
+            nmi = []
+            possibilities[function] = [process, softirq, hardirq, nmi]
+            if run_functions[function] == []:
+                continue
+            for pred in run_functions[function][2]:
+                if pred.startswith("__do_sys") or pred.startswith("__ia32_sys"):
+                    possibilities[function][0].append(pred)
+                elif pred in softirq_funcs:
+                    possibilities[function][1].append(pred)
+                elif pred == "__handle_irq_event_percpu":
+                    possibilities[function][2].append(pred)
+                elif pred == "default_do_nmi":
+                    possibilities[function][3].append(pred)
 
-#mlta_graph_file_name = "callgraph_mlta_69fulldirect.dot"
-#mlta_graph_file = open(mlta_graph_file_name, 'r')
+    else:
+        for function in mlta_run_functions:
+            process = []
+            softirq = []
+            hardirq = []
+            nmi = []
+            possibilities[function] = [process, softirq, hardirq, nmi]
+            if mlta_run_functions[function] == []:
+                continue
+            for pred in mlta_run_functions[function][2]:
+                if pred.startswith("__do_sys") or pred.startswith("__ia32_sys"):
+                    possibilities[function][0].append(pred)
+                elif pred in softirq_funcs:
+                    possibilities[function][1].append(pred)
+                elif pred == "__handle_irq_event_percpu":
+                    possibilities[function][2].append(pred)
+                elif pred == "default_do_nmi":
+                    possibilities[function][3].append(pred)
 
-json_file_name = input("Enter .json file name to write to: ")
-kernel_path = "/home/priya/linux-6.9bc/"
-SVF_callgraph_linux = nx.drawing.nx_agraph.read_dot(SVF_graph_file_name)
-#mlta_callgraph_linux = nx.drawing.nx_agraph.read_dot(mlta_graph_file_name)
+    return possibilities
 
 
-find_run_nodes(SVF_graph_file, True)
-#find_run_nodes(mlta_graph_file, False)
-SVF_trace_run_functions(SVF_graph_file, SVF_callgraph_linux)
-#mlta_trace_run_functions(mlta_graph_file, mlta_callgraph_linux)
+def SVF_main():
+    SVF_graph_file_name = "/home/priya/callgraphs/callgraph_linux_VFSWPA.dot"
+    SVF_graph_file = open(SVF_graph_file_name, 'r')
+    json_file_name = input("Enter .json file name to write to: ")
+    kernel_path = "/home/priya/linux-6.9bc/"
+    SVF_callgraph_linux = nx.drawing.nx_agraph.read_dot(SVF_graph_file_name)
+    find_run_nodes(SVF_graph_file, True)
+    #SVF_trace_run_functions(SVF_graph_file, SVF_callgraph_linux)
+    get_ancestors(SVF_callgraph_linux, True)
+    json_object_1 = json.dumps(run_functions, indent = 5)
+    with open(json_file_name, "w") as outfile:
+        outfile.write(json_object_1)
+
+    possibilities = get_possibilities(True)
+    json_object_poss = json.dumps(possibilities, indent = 5)
+    with open(json_file_name, "a") as outfile:
+        outfile.write(json_object_poss)
+
+    SVF_graph_file.close()
 
 
-json_object_1 = json.dumps(run_functions, indent = 5)
-#json_object_2 = json.dumps(mlta_run_functions, indent = 5)
+def mlta_main():
+    mlta_graph_file_name = "/home/priya/callgraphs/callgraph_mlta_69fulldirect.dot"
+    mlta_graph_file = open(mlta_graph_file_name, 'r')
 
-with open(json_file_name, "w") as outfile:
-    outfile.write(json_object_1)
-    #outfile.write(json_object_2)
+    json_file_name = input("Enter .json file name to write to: ")
+    kernel_path = "/home/priya/linux-6.9bc/"
+    mlta_callgraph_linux = nx.drawing.nx_agraph.read_dot(mlta_graph_file_name)
+    find_run_nodes(mlta_graph_file, False)
+    #mlta_trace_run_functions(mlta_graph_file, mlta_callgraph_linux)
+    get_ancestors(mlta_callgraph_linux, False)
+    json_object_2 = json.dumps(mlta_run_functions, indent = 5)
 
-SVF_graph_file.close()
-#mlta_graph_file.close()
+    with open(json_file_name, "w") as outfile:
+        outfile.write(json_object_2)
 
+    possibilities = get_possibilities(False)
+    json_object_poss = json.dumps(possibilities, indent = 5)
+    with open(json_file_name, "a") as outfile:
+        outfile.write(json_object_poss)
+    mlta_graph_file.close()
+
+
+if __name__ == "__main__":
+    mlta_main()
