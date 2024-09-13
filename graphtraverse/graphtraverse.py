@@ -35,7 +35,7 @@ def get_name(node):
 def check_S(source_name, child_name):
     if child_name=="_raw_spin_lock":
         return True
-    elif child_name=="local_lock":
+    elif child_name=="local_lock" or "local_lock." in child_name:
         return True
     return False
 
@@ -44,16 +44,16 @@ def check_H(source_name, child_name):
         return True
     elif child_name=="_raw_spin_lock_bh":
         return True
-    elif child_name=="local_lock":
-        return True
-    elif child_name=="local_lock_bh":
+    elif child_name=="local_lock" or "local_lock." in child_name:
         return True
     return False
 
 def check_NMI(source_name, child_name):
     nmi_function_list = ["_raw_spin_lock", "_raw_spin_lock_bh", "_raw_spin_lock_irq", "_raw_spin_lock_irqsave", 
-            "local_lock", "local_lock_bh", "local_lock_irq", "local_lock_irqsave" ]
+            "local_lock", "local_lock_irq", "local_lock_irqsave" ]
     if child_name in nmi_function_list:
+        return True
+    if "local_lock." in child_name or "local_lock_irqsave." in child_name or  "local_lock_irq." in child_name:
         return True
     else:
         return False
@@ -99,7 +99,7 @@ lock_dict = {'_raw_spin_lock': '_raw_spin_unlock', '_raw_spin_lock_bh': '_raw_sp
 skiplist = ['panic', 'machine_crash_shutdown', 'crash_kexec', 'start_kernel', 'emergency_restart', '__queue_work', 'kdb_gdb_state_pass', 'gdbstub_state',
         'vprintk', 'vkdb_printf','__ratelimit', '___ratelimit', 'try_to_wake_up', 'vprintk_emit', '__queue_delayed_work', 'get_random_bytes', 
         '_get_random_bytes', 'show_stack', 'kernel_text_address',  'kvfree_call_rcu', 'kvfree', 'kfree', 'vfree', 'migrate_enable', 'rcu_read_unlock.46470', 
-        'rcu_read_unlock.24024']
+        'rcu_read_unlock.24024', 'check_critical_timing']
 
 def dfs_path(callgraph, source, end, parent_map):
     path = []
@@ -125,7 +125,11 @@ def dfs_nx(callgraph, source, max_context):
     nodes = [source]
     depth_limit = 50
     parent_map = {}
-    source_fun_name = get_name(callgraph._node[source])
+    if source in callgraph:
+        source_fun_name = get_name(callgraph._node[source])
+    else:
+        print(source+" not in callgraph")
+        return
 
     get_children = (
         callgraph.neighbors 
@@ -143,21 +147,31 @@ def dfs_nx(callgraph, source, max_context):
         lock_stack = []
         path = ""
 
+        check_nmi = False
+        irq_disable = False
         while len(stack)!=0:
             parent, children = stack.pop()
             parent_fun_name = get_name(callgraph._node[parent])
             irq_disabled = 0
+
             
+
             for child in children:
                 warning = [False, False]
                 child_fun_name = get_name(callgraph._node[child])
                 parent_map[child_fun_name] = parent_fun_name
+
+
+                if child_fun_name == 'in_nmi' or "in_nmi." in child_fun_name:
+                    check_nmi = True
+                if child_fun_name == 'arch_local_irq_disable' or "arch_local_irq_disable." in child_fun_name:
+                    irq_disable = True
                
                 if source_fun_name in get_precur_functions():
                     if (check_NMI(source_fun_name, child_fun_name)):
                         warning[1] = True
 
-                if "map" in source_fun_name:
+                if "map" in source_fun_name or "bpf_for_each" in source_fun_name or "trie" in source_fun_name or "sock_hash_delete" in source_fun_name or "sock_hash_lookup" in source_fun_name:
                     if (check_NMI(source_fun_name, child_fun_name)):
                         warning[1] = True
 
@@ -196,13 +210,18 @@ def dfs_nx(callgraph, source, max_context):
                 if warning[0] == True:
                     path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
                     if path!=[]:
-                        print("WARNING: "+source_fun_name+" used "+child_fun_name)
+                        if check_NMI == True and max_context=="NMI":
+                            print("RANKING 2 WARNING: "+source_fun_name+" used "+child_fun_name)
+                        elif irq_disable ==True and (max_context=="S" or max_context=="H"):
+                            print("RANKING 2 WARNING: "+source_fun_name+" used "+child_fun_name)
+                        else:
+                            print("RANKING 1 WARNING: "+source_fun_name+" used "+child_fun_name)
                         print(path)
 
                 if warning[1] == True:
                      path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
                      if path!=[]:
-                        print("WARNING: "+source_fun_name+" used "+child_fun_name+" recursive issue")
+                        print("RANKING 1 WARNING: "+source_fun_name+" used "+child_fun_name+" recursive issue")
                         print(path)
                 
                 if child not in visited:
@@ -262,7 +281,7 @@ def bfs (callgraph, source, max_context):
                     child_fun_name = get_name(callgraph._node[child])
 
                     skip_list = ['vprintk', '_get_random_bytes', '_printk', 'panic', '__alloc', '__alloc_pages', 'kvfree_call_rcu', 'call_rcu'
-                            , 'rcu_read_unlock_special']
+                            , 'rcu_read_unlock_special', 'check_critical_timing']
                     if child_fun_name in skip_list:
                         return
 

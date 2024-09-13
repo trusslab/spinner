@@ -65,19 +65,21 @@ def parse_and_write_to_cubic(line):
         insert_line+=" ret = "
         insert_line+=function_name
         insert_line+="("
-
-    if len(params)==1 and params[0]=="void":
-        insert_line+=");"
-    elif len(params)==1:
-        insert_line+=" param0);"
+    if function_name=="bpf_trace_printk":
+        insert_line+="\"hello world\");\n"
     else:
-        for i in range(len(params)-1):
+        if len(params)==1 and params[0]=="void":
+            insert_line+=");"
+        elif len(params)==1:
+            insert_line+=" param0);"
+        else:
+            for i in range(len(params)-1):
+                insert_line+=" param"
+                insert_line+=str(i)
+                insert_line+=","
             insert_line+=" param"
-            insert_line+=str(i)
-            insert_line+=","
-        insert_line+=" param"
-        insert_line+=str(i+1)
-        insert_line+=");"
+            insert_line+=str(i+1)
+            insert_line+=");"
 
     if return_type!='void':
         insert_line+="if (ret) {bpf_printk(\"hello\");}\n"

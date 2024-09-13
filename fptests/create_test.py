@@ -103,15 +103,18 @@ def create_test():
                 else:
                     f.write(return_type+" ret = "+function_name+"(")
 
-                if len(params)==1 and params[0]=="void":
-                    f.write(");\n")
-                elif len(params)==1:
-                    f.write(" param0);\n")
+                if function_name=="bpf_trace_printk":
+                    f.write("\"hello world\");\n")
                 else:
-                    for i in range(len(params)-1):
-                        f.write(" param"+str(i)+",")
-                    f.write(" param"+str(i+1))
-                    f.write(");\n")
+                    if len(params)==1 and params[0]=="void":
+                        f.write(");\n")
+                    elif len(params)==1:
+                        f.write(" param0);\n")
+                    else:
+                        for i in range(len(params)-1):
+                            f.write(" param"+str(i)+",")
+                        f.write(" param"+str(i+1))
+                        f.write(");\n")
 
                 write_end(f)
             break

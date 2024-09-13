@@ -569,7 +569,7 @@ function_lists = [function_list_array, function_list_percpu_array, function_list
         function_list_htab_percpu, function_list_htab_lru_percpu , function_list_htab_of_maps, function_list_stack_trace, function_list_trie,
         function_list_dev, function_list_dev_hash, function_list_sock, function_list_sock_hash, function_list_cpu, function_list_xsk,
         function_list_reuseport_array, function_list_stack, function_list_queue, function_list_sk_storage, function_list_struct_ops, function_list_ringbuf,
-        function_list_inode_storage, function_list_task_storage, function_list_user_ringbuf, function_list_cgrp_storage, function_list_arena, kfunc_list] 
+        function_list_inode_storage, function_list_task_storage, function_list_user_ringbuf, function_list_cgrp_storage, function_list_arena, kfunc_list]
 node_list = {}
 
 

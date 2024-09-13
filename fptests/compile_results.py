@@ -43,8 +43,8 @@ def compile_results():
 
 
     tracing_prog_types = ['perf_event', 'tracepoint', 'tp', 'raw_tp.w', 'raw_tracepoint.w', 'raw_tp', 'raw_tracepoint', 'kprobe', 'kretprobe', 
-            'kprobe.multi', 'kretprobe.multi', 'uprobe', 'uprobe.s', 'uretprobe', 'uretprobe.s', 'usdt', 'fmod_ret', 'fmod_ret.s', 'fentry', 
-            'fentry.s', 'fexit', 'fexit.s', 'iter', 'iter.s', 'tp_btf']
+            'ksyscall', 'kretsyscall', 'kprobe.multi', 'kretprobe.multi', 'uprobe', 'uprobe.s', 'uretprobe', 'uretprobe.s', 'usdt', 'fmod_ret', 
+            'fmod_ret.s', 'fentry', 'fentry.s', 'fexit', 'fexit.s', 'iter', 'iter.s', 'tp_btf']
     potential_recur_funcs = []
     precur_file = open("output/precur.txt", "w")
     for key in dict_helpers:
