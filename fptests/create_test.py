@@ -15,8 +15,9 @@ def write_params(f, params):
     return
 
 def restart_marker(marker):
-    marker.write("* Start of BPF helper function descriptions:")
-    
+    #marker.write("* Start of BPF helper function descriptions:")
+    marker = "* Start of BPF helper function descriptions:"
+    return marker
 
 def write_beginning(f, attach_to):
     f.write("#include \"vmlinux.h\"\n")
@@ -37,20 +38,20 @@ def write_end(f):
     f.write("return 0;\n")
     f.write("}\n")
 
-def create_test():
+def create_test(attach_to, marker):
     f = open ("/home/priya/defogger/fptests/output/test.bpf.c", "w")
     helper_file = open("/home/priya/defogger/fptests/bpf.h", "r")
-    marker = open("/home/priya/defogger/fptests/output/marker.txt", "r")
+    #marker = open("/home/priya/defogger/fptests/output/marker.txt", "r")
 
-    prog_type_file = open("/home/priya/defogger/fptests/output/prog_type.txt", "r")
-    attach_to = prog_type_file.read()
-    prog_type_file.close()
+#    prog_type_file = open("/home/priya/defogger/fptests/output/prog_type.txt", "r")
+#    attach_to = prog_type_file.read()
+#    prog_type_file.close()
+    
 
+    #marker_fn = marker.read()
+    #marker.close()
 
-    marker_fn = marker.read()
-    marker.close()
-
-    marker = open("/home/priya/defogger/fptests/output/marker.txt", "w")
+    #marker = open("/home/priya/defogger/fptests/output/marker.txt", "w")
     read_start = False
     write_marker = False
 
@@ -59,19 +60,21 @@ def create_test():
         if not line:
             break
 
-        if marker_fn in line:   #found where we stopped last time
+        #if marker_fn in line:   #found where we stopped last time
+        if marker in line:    
             read_start = True
             write_marker = True
             continue
 
         if "*/" in line and read_start == True:    #end of all function defs
-            restart_marker(marker)
+            marker = restart_marker(marker)
             read_start = False
             continue
 
         if read_start==True and re.search("^ [*] ([a-z]|[A-Z]|[_])", line):         #next fn def
             if write_marker:            #need to keep track of where we ended
-                marker.write(line)
+                #marker.write(line)
+                marker = line
                 write_marker = False
             
                 write_beginning(f, attach_to)
@@ -95,8 +98,8 @@ def create_test():
                     params.append(split_list[i])
                 #print(return_type+function_name)
                 print(params)
-
-                write_params(f, params)
+                if function_name!="bpf_trace_printk":
+                    write_params(f, params)
 
                 if return_type == "void":
                     f.write(function_name+"(")
@@ -104,7 +107,7 @@ def create_test():
                     f.write(return_type+" ret = "+function_name+"(")
 
                 if function_name=="bpf_trace_printk":
-                    f.write("\"hello world\");\n")
+                    f.write("\"hello world\", 12);\n")
                 else:
                     if len(params)==1 and params[0]=="void":
                         f.write(");\n")
@@ -122,7 +125,12 @@ def create_test():
 
     f.close()
     helper_file.close()
-    marker.close()
+    #marker.close()
+    return marker
+
+
+if __name__ == "__main__":
+    create_test("cgroup_dev", "* Start of BPF helper function descriptions:")
 
 
 

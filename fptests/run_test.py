@@ -23,12 +23,12 @@ program_types = ['cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ing
 
 for program_type in program_types:
 
-    prog_type_file = open("output/prog_type.txt", "w")
-    prog_type_file.write(program_type)
-    prog_type_file.close()
-    
+#    prog_type_file = open("output/prog_type.txt", "w")
+#    prog_type_file.write(program_type)
+#    prog_type_file.close()
+    marker = "* Start of BPF helper function descriptions:"
     for i in range(216):
-        create_test()
+        marker = create_test(program_type, marker)
         test_helper_fn = ''
         result_line = ''
 
@@ -54,22 +54,20 @@ for program_type in program_types:
 
        
         make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/usr/include/bpf/', '-c', 'output/test.bpf.c', '-o', 'output/test.bpf.o']
-        make_file = open("output/make_result.txt", 'w')
-        subprocess.call(make_command, stderr=make_file, shell=False)
-        
+        #make_file = open("output/make_result.txt", 'w')
+        #subprocess.call(make_command, stderr=make_file, shell=False)
+        make_result = subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
         if program_type == "freplace/print":
             make_command = ['gcc', '-L/usr/lib64/', '-o', 'output/freplace', 'output/freplace.c', '-lbpf']
-            subprocess.call(make_command, stderr = make_file, shell=False)
-
+            #subprocess.call(make_command, stderr = make_file, shell=False)
         else:
             make_command = ['gcc', '-L/usr/lib64/', '-o', 'output/test', 'output/test.c', '-lbpf']
-            subprocess.call(make_command, stderr = make_file, shell=False)
+            #subprocess.call(make_command, stderr = make_file, shell=False)
+        make_result += subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
+        #make_file.close()
 
-        make_file.close()
-
-
-        make_file = open('output/make_result.txt', 'r')
-        make_result = make_file.read().replace('\n', '')
+        #make_file = open('output/make_result.txt', 'r')
+        #make_result = make_file.read().replace('\n', '')
         if 'error' in make_result:
             result_file.write(f"{'yes':<20}")
         else:
@@ -78,23 +76,25 @@ for program_type in program_types:
             result_file.write(f"{'yes':<20}")
         else:
             result_file.write(f"{'no':<20}")       
-        make_file.close()
+        #make_file.close()
 
 
-        run_file = open("output/run_result.txt", 'w')
+        #run_file = open("output/run_result.txt", 'w')
         if program_type=="freplace/print":
-            subprocess.call('./output/freplace', stderr = run_file, shell=False)
+            #subprocess.call('./output/freplace', stderr = run_file, shell=False)
+            run_result = subprocess.run(["./output/freplace"], shell = False, capture_output=True, text=True).stderr
         else:
-            subprocess.call('./output/test', stderr = run_file, shell=False)
-        run_file.close()
+            #subprocess.call('./output/test', stderr = run_file, shell=False)
+            run_result = subprocess.run(["./output/test"], shell = False, capture_output=True, text=True).stderr
+        #run_file.close()
 
-        run_file = open("output/run_result.txt", "r")
-        run_result = run_file.read().replace('\n', '')
+        #run_file = open("output/run_result.txt", "r")
+        #run_result = run_file.read().replace('\n', '')
         if 'unknown func' in run_result or 'program of this type cannot use' in run_result or 'helper call might sleep in a non-sleepable prog' in run_result:
             result_file.write(f"{'no'}\n")
         else:
             result_file.write(f"{'yes'}\n")
-        run_file.close()
+        #run_file.close()
 
         
 
