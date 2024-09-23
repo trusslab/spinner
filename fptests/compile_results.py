@@ -9,6 +9,7 @@ def compile_results():
     allowed_prog_types = []
     disallowed_prog_types = []
     needs_check = []
+    sleepable_list = []
     dict_helpers = {}
 
 
@@ -17,12 +18,13 @@ def compile_results():
         if not line:
             break
         arr = line.split()
-        if len(arr) == 5:
+        if len(arr) == 6:
             if arr[0] not in helper_functions:
                 empty1 = []
                 empty2 = []
                 empty3 = []
-                dict_helpers[arr[0]] = [empty1, empty2, empty3]
+                sleepable = ''
+                dict_helpers[arr[0]] = [empty1, empty2, empty3, sleepable]
 
     #print(dict_helpers)
 
@@ -32,13 +34,17 @@ def compile_results():
         if not line:
             break
         arr = line.split()
-        if len(arr) == 5:
-            if arr[4] == "yes":
+        #print(arr[0]+": "+arr[4])
+        if len(arr) == 6:
+            if arr[5] == "yes":
                 dict_helpers[arr[0]][0].append(arr[1])
             else:
                 dict_helpers[arr[0]][1].append(arr[1])
             if arr[2] =="yes" or arr[3]=="yes":
                 dict_helpers[arr[0]][2].append("check "+arr[0]+" with "+arr[1])
+            if arr[4] == 'yes':
+                dict_helpers[arr[0]][3]="sleepable"
+            
 
 
 
@@ -52,6 +58,9 @@ def compile_results():
         allowed_prog_types.append(dict_helpers[key][0])
         disallowed_prog_types.append(dict_helpers[key][1])
         needs_check.append(dict_helpers[key][2])
+        if not dict_helpers[key][3]:
+            dict_helpers[key][3]="not-sleepable"
+        sleepable_list.append(dict_helpers[key][3])
 
 
         tp = False
@@ -71,15 +80,19 @@ def compile_results():
     precur_file.writelines(potential_recur_funcs)
     precur_file.close()
 
-    df = DataFrame({"Helper function":helper_functions, "Allowed program types" : allowed_prog_types, "Disallowed program types": disallowed_prog_types, "Needs check": needs_check})
+    df = DataFrame({"Helper function":helper_functions, "Allowed program types" : allowed_prog_types, "Disallowed program types": disallowed_prog_types, "Needs check": needs_check, "Sleepable": sleepable_list})
 
     print(df)
     print(len(helper_functions))
 
     df.to_excel('helper-progtype-results.xlsx', sheet_name = 'sheet1', index = False)
     helper_progtype_file.close()
-    
+   
     json_object = json.dumps(dict_helpers)
 
     with open('output/helper-progtype.json', "w") as outfile:
         outfile.write(json_object)
+
+
+if __name__ == "__main__":
+    compile_results()

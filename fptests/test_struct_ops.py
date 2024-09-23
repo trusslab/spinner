@@ -3,6 +3,32 @@ import subprocess
 
 utypes = ['u8', 'u16', 'u32', 'u64', 's8', 's16', 's32', 's64']
 
+def prep_file():
+    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "r")
+    readlines = f.readlines()
+    for i in range(len(readlines)):
+        if 'void BPF_PROG(bpf_cubic_init, struct sock *sk)' in readlines[i]:
+            for j in range(10):
+                readlines.insert(i+2, '//\n')
+            break
+    f.close()
+    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "w")
+    f.writelines(readlines)
+    f.close()
+
+def cleanup_file():
+    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "r")
+    readlines = f.readlines()
+    for i in range(len(readlines)):
+        if 'void BPF_PROG(bpf_cubic_init, struct sock *sk)' in readlines[i]:
+            for j in range(6):
+                readlines.pop(i+2)
+            break
+    f.close()
+    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "w")
+    f.writelines(readlines)
+    f.close()
+
 def write_params(insert_line, params):
     if len(params)==1 and  params[0]=="void":
         return insert_line
@@ -90,12 +116,6 @@ def parse_and_write_to_cubic(line):
     for i in range(len(readlines)):
         if re.search('bpf_cubic_init\"', readlines[i]):
             print(i)
-            '''
-            readlines.pop(i+3)
-            readlines.pop(i+4)
-            readlines.insert(i+3 ,first_line)
-            readlines.insert(i+4, insert_line)
-            '''
             readlines[i+3] = first_line
             readlines[i+4] = insert_line
             break
@@ -119,13 +139,13 @@ def make(result_file):
     #make_file = open('make_result.txt', 'r')
     #make_result = make_file.read().replace('\n', '')
     if 'error' in make_result:
-        result_file.write(f"{'yes':<20}")
+        result_file.write(f"{'yes':<15}")
     else:
-        result_file.write(f"{'no':<20}")
+        result_file.write(f"{'no':<15}")
     if 'warning' in make_result:
-        result_file.write(f"{'yes':<20}")
+        result_file.write(f"{'yes':<15}")
     else:
-        result_file.write(f"{'no':<20}")
+        result_file.write(f"{'no':<15}")
     #make_file.close()
 
 def run(result_file):
@@ -137,7 +157,12 @@ def run(result_file):
 
     #run_file = open("run_result.txt", "r")
     #run_result = run_file.read().replace('\n', '')
-    if 'unknown func' in run_result:
+    if 'helper call might sleep in a non-sleepable prog' in run_result:
+        result_file.write(f"{'yes':15}")
+    else:
+        result_file.write(f"{'no':15}")
+
+    if 'unknown func' in run_result or 'program of this type cannot use' in run_result or 'helper call might sleep in a non-sleepable prog' in run_result:
         result_file.write(f"{'no'}\n")
     else:
         result_file.write(f"{'yes'}\n")
@@ -155,6 +180,8 @@ def restart_marker(marker):
 def test_struct_ops():
     result_file = open('output/helper-progtype.txt','a')
     marker = "* Start of BPF helper function descriptions:"
+    prep_file()
+    
     for i in range(216):
 
         helper_file = open("bpf.h", "r")
@@ -205,6 +232,8 @@ def test_struct_ops():
         #marker.close()
 
     result_file.close()
+    cleanup_file()
+    
 
 if __name__ == "__main__":
     test_struct_ops()

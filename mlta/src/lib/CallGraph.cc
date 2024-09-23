@@ -309,7 +309,7 @@ bool CallGraphPass::doFinalization(Module *M) {
 }
 
 bool CallGraphPass::doModulePass(Module *M) {
-	dotfile.open("/home/priya/mlta/src/lib/callgraph_mlta_69fulldirect.dot");
+	dotfile.open("src/lib/callgraph.dot");
   	dotfile<<"digraph \"Call Graph\"  {\n";
 	OP<<"dotfile opened\n";
 	++ MIdx;

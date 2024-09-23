@@ -12,7 +12,7 @@ actual_funcs = {
             "bpf_sock_ops_getsockopt"],
         "bpf_fib_lookup": ["bpf_xdp_fib_lookup", "bpf_skb_fib_lookup"],
         "bpf_skb_output": ["bpf_skb_event_output"],
-        "bpf_xdp_output": ["bpf_xdp_output"],
+        "bpf_xdp_output": ["bpf_xdp_event_output"],
         "bpf_get_func_arg": ["get_func_arg"],
         "bpf_get_func_arg_cnt": ["get_func_arg_cnt"],
         "bpf_get_func_ret": ["get_func_ret"],
@@ -23,7 +23,8 @@ actual_funcs = {
         "bpf_store_hdr_opt": ["bpf_sock_ops_store_hdr_opt"],
         "bpf_reserve_hdr_opt": ["bpf_sock_ops_reserve_hdr_opt"],
         "bpf_get_func_ip": ["bpf_get_func_ip_tracing", "bpf_get_func_ip_kprobe_multi", 
-            "bpf_get_func_ip_uprobe_multi", "bpf_get_func_ip_kprobe"]
+            "bpf_get_func_ip_uprobe_multi", "bpf_get_func_ip_kprobe"],
+        "bpf_check_mtu": ["bpf_skb_check_mtu", "bpf_xdp_check_mtu"]
         }
 
 def transform_context(type_context):
@@ -57,10 +58,13 @@ def helper_context():
                 if context_hierarchy[progtype_context[progtype]]>context_hierarchy[context]:
                     context = progtype_context[progtype]
         if helper not in actual_funcs:
-            helper_context[helper] = context
+            helper_context[helper] = [context]
+            helper_context[helper].append(helper_progtype[helper][3])
         else:
-            for actual_func in actual_funcs:
-                helper_context[actual_func] = context
+            for actual_func in actual_funcs[helper]:
+                helper_context[actual_func] = [context]
+                helper_context[actual_func].append(helper_progtype[helper][3])
+        
         
     for progtype in helper_progtype['bpf_map_update_elem'][0]:
         if progtype not in progtype_context:
