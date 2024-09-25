@@ -105,8 +105,7 @@ lock_dict = {'_raw_spin_lock': '_raw_spin_unlock', '_raw_spin_lock_bh': '_raw_sp
 skiplist = ['panic', 'machine_crash_shutdown', 'crash_kexec', 'start_kernel', 'emergency_restart', '__queue_work', 'kdb_gdb_state_pass', 'gdbstub_state',
         'vprintk', 'vkdb_printf','__ratelimit', '___ratelimit', 'try_to_wake_up', 'vprintk_emit', '__queue_delayed_work', 'get_random_bytes', 
         '_get_random_bytes', 'show_stack', 'kernel_text_address',  'kvfree_call_rcu', 'kvfree', 'kfree', 'vfree', 'migrate_enable', 'rcu_read_unlock.46470', 
-        'rcu_read_unlock.24024', 'check_critical_timing', 'rcu_read_unlock_special', 'start_report', 
-        'dequeue_task', 'mod_timer', 'lock_acquire', 'rwsem_wake']
+        'rcu_read_unlock.24024', 'check_critical_timing', 'rcu_read_unlock_special', 'start_report', 'btf_parse_vmlinux', 'dequeue_task', 'mod_timer', 'lock_acquire', 'rwsem_wake']
 
 def dfs_path(callgraph, source, end, parent_map):
     path = []
@@ -165,7 +164,7 @@ def dfs_nx(callgraph, source, max_context, recur):
             
 
             for child in children:
-                warning = 0
+                warning = [False, False]
                 child_fun_name = get_name(callgraph._node[child])
                 parent_map[child_fun_name] = parent_fun_name
 
@@ -179,53 +178,53 @@ def dfs_nx(callgraph, source, max_context, recur):
 
                 if source_fun_name in get_precur_functions():
                     if (check_nested_lock(child_fun_name)):
-                        warning = 2
+                        warning[1] = True
 
                 if recur:
                     if (check_nested_lock(child_fun_name)):
-                        warning = 2
+                        warning[1] = True
 
                 if max_context=="S":
-                    #if not irq_disabled:
                     if (check_S(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_synchronize_rcu(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_sleeping_functions(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if check_sleeping_locks(child_fun_name):
-                        warning = 1
+                        warning[0] = True
 
                 elif max_context=="H":
-                    #if not irq_disabled:
                     if (check_H(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_synchronize_rcu(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_functions(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_locks(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
 
                 elif max_context == "NMI":
                     if (check_NMI(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if(check_synchronize_rcu(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_functions(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                     if (check_sleeping_locks(child_fun_name)):
-                        warning = 1
+                        warning[0] = True
                 
-                if warning == 1:
+                if warning[0]:
                     path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
                     if path!=[]:
-                        reports.append("WARNING: "+source_fun_name+" used "+child_fun_name+"\n"+', '.join(path))
+                        if source_fun_name!="bpf_snprintf_btf" or "vmalloc" not in path[0]:
+                            reports.append("WARNING: "+source_fun_name+" used "+child_fun_name+"\n"+', '.join(path))
 
-                if warning == 2:
+                if warning[1]:
                      path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
                      if path!=[]:
-                        reports.append("WARNING: "+source_fun_name+" used "+child_fun_name+" nested issue" + "\n"+', '.join(path))
+                        if source_fun_name!="bpf_snprintf_btf" or "vmalloc" not in path[0]:
+                            reports.append("WARNING: "+source_fun_name+" used "+child_fun_name+" nested issue" + "\n"+', '.join(path))
                 
                 if child not in visited:
                     visited.add(child)
@@ -237,130 +236,20 @@ def dfs_nx(callgraph, source, max_context, recur):
 
     for i in range(len(reports)):
         if "nested issue" in reports[i]:
-            print("RANKING 1 ",reports[i])
+            print("RANKING 1 ",reports[i], "\n")
         else:
             if check_nmi and max_context=="NMI":
-                print("RANKING 2",reports[i])
+                print("RANKING 2",reports[i], "\n")
             elif irq_disable and max_context=="S":
                 print("RANKING 2",reports[i])
             elif irq_disable and max_context=="H":
-                print("RANKING 2",reports[i])
+                print("RANKING 2",reports[i], "\n")
             else:
-                print("RANKING 1",reports[i])
-'''
-def bfs_path (callgraph, source, end):
-    queue = []
-    queue.append([source])
-    source_fun_name = get_name(callgraph._node[source])
-    
-    queue_readable = []
-    queue_readable.append([source_fun_name])
-    while queue:
-        path=queue.pop(0)
-        path_readable = queue_readable.pop(0)
-        node = path[-1]
-        if node==end:
-            return path_readable
-        for neighbor in callgraph.neighbors(node):
-            neighbor_fun_name = get_name(callgraph._node[neighbor])
-            new_path = list(path)
-            new_path_readable = list(path_readable)
-            new_path.append(neighbor)
-            new_path_readable.append(neighbor_fun_name)
-            queue.append(new_path)
-            queue_readable.append(new_path_readable)
+                print("RANKING 1",reports[i], "\n")
 
-
-def bfs (callgraph, source, max_context):
-    source_fun_name = get_name(callgraph._node[source])
-    path= []
-    flag = 0
-    if source_fun_name == "sock_hash_delete_elem":
-        flag = 1
-    depth_limit = 20 
-    neighbors = callgraph.neighbors
-    seen = {source}
-    n = len(callgraph)
-    depth = 1 
-    next_parents_children = [(source, neighbors(source))]
-    while next_parents_children and depth<depth_limit:
-        this_parents_children = next_parents_children
-        next_parents_children = []
-        for parent, children in this_parents_children:
-
-            parent_fun_name = get_name(callgraph._node[parent])
-           
-            path.append(parent_fun_name)
-
-            for child in children:
-                if child not in seen:
-                    child_fun_name = get_name(callgraph._node[child])
-
-                    skip_list = ['vprintk', '_get_random_bytes', '_printk', 'panic', '__alloc', '__alloc_pages', 'kvfree_call_rcu', 'call_rcu'
-                            , 'rcu_read_unlock_special', 'check_critical_timing']
-                    if child_fun_name in skip_list:
-                        return
-
-                    if flag==1:
-                        print(child_fun_name)
-
-                    if max_context=="S":
-                        if (check_S(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                        
-                        if(check_synchronize_rcu(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                        if(check_sleeping_functions(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                        if check_sleeping_locks(source_fun_name, child_fun_name):
-                            print(bfs_path(callgraph, source, child))
-                    
-                    if max_context=="H":
-                        if (check_H(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                            #print(path)
-                        
-                        if(check_synchronize_rcu(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                            #if flag==1:
-                                #print(path)
-
-                        if (check_sleeping_functions(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                            #if flag==1:
-                                #print(path)
-                        if (check_sleeping_locks(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                            #if flag==1:
-                                #print(path)
-                        
-                    if max_context=="NMI":
-                        if (check_NMI(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                        
-                        if(check_synchronize_rcu(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                        if(check_sleeping_functions(source_fun_name, child_fun_name)):
-                            print(bfs_path(callgraph, source, child))
-                        if check_sleeping_locks(source_fun_name, child_fun_name):
-                            print(bfs_path(callgraph, source, child))
-                        
-                    seen.add(child)
-                    next_parents_children.append((child, neighbors(child)))
-            if len(seen) == n:
-                return 
-        depth+=1
-'''
-
-#label = callgraph._node["Node0x55e211e202f0"]["label"]
-#fun_name = label[label.index("fun:")+5 : label.rindex("\\")]
-#print("calling dfs")
 
 with open(node_file_name) as json_file:
     function_list_json = json.load(json_file)
-    #print(function_list_json)
-
-    #dfs_nx(callgraph_linux, "Node0x563e8ef2ecf0", function_list_json["Node0x563e8ef2ecf0"])
      
     for key in function_list_json:
         recur = 0
@@ -370,4 +259,3 @@ with open(node_file_name) as json_file:
             dfs_nx(callgraph_linux, key, function_list_json[key][0], recur)
     
        
-#print(fun_name)

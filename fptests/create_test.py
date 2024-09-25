@@ -6,7 +6,6 @@ def write_params(f, params):
     for i in range(len(params)):
         words = params[i].split()
         temp_param_name = words.pop()
-        #print(words)
         for k in range(len(words)):
             f.write(words[k]+" ")
         if '*' in temp_param_name:
@@ -15,7 +14,6 @@ def write_params(f, params):
     return
 
 def restart_marker(marker):
-    #marker.write("* Start of BPF helper function descriptions:")
     marker = "* Start of BPF helper function descriptions:"
     return marker
 
@@ -41,17 +39,8 @@ def write_end(f):
 def create_test(attach_to, marker):
     f = open ("/home/priya/defogger/fptests/output/test.bpf.c", "w")
     helper_file = open("/home/priya/defogger/fptests/bpf.h", "r")
-    #marker = open("/home/priya/defogger/fptests/output/marker.txt", "r")
-
-#    prog_type_file = open("/home/priya/defogger/fptests/output/prog_type.txt", "r")
-#    attach_to = prog_type_file.read()
-#    prog_type_file.close()
     
 
-    #marker_fn = marker.read()
-    #marker.close()
-
-    #marker = open("/home/priya/defogger/fptests/output/marker.txt", "w")
     read_start = False
     write_marker = False
 
@@ -60,7 +49,6 @@ def create_test(attach_to, marker):
         if not line:
             break
 
-        #if marker_fn in line:   #found where we stopped last time
         if marker in line:    
             read_start = True
             write_marker = True
@@ -73,14 +61,12 @@ def create_test(attach_to, marker):
 
         if read_start==True and re.search("^ [*] ([a-z]|[A-Z]|[_])", line):         #next fn def
             if write_marker:            #need to keep track of where we ended
-                #marker.write(line)
                 marker = line
                 write_marker = False
             
                 write_beginning(f, attach_to)
 
                 split_list=re.split('\(|\)|,', line)
-                #print(split_list)
                 retfn_list = (split_list[0].split())
                 return_type = retfn_list[1]
                 if return_type=="struct":
@@ -96,7 +82,6 @@ def create_test(attach_to, marker):
                 params = []
                 for i in range(1, len(split_list)-1):
                     params.append(split_list[i])
-                #print(return_type+function_name)
                 print(params)
                 if function_name!="bpf_trace_printk":
                     write_params(f, params)
@@ -125,7 +110,6 @@ def create_test(attach_to, marker):
 
     f.close()
     helper_file.close()
-    #marker.close()
     return marker
 
 

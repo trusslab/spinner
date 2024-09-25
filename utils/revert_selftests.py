@@ -15,9 +15,6 @@ for root, dirs, files in os.walk(directory):
             for i in range(len(lines)):
                 if 'bpf_printk("hello unique string' in lines[i]:
                     lines[i] = regex.sub('', lines[i])
-                    #ines[i] = lines[i].replace('bpf_printk("hello unique string .*");', '')
-                    #print(lines[i])
-                    #lines.pop(i)
                 
             f.close()
             list.write(file+"\n")

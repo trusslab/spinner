@@ -26,7 +26,6 @@ def compile_results():
                 sleepable = ''
                 dict_helpers[arr[0]] = [empty1, empty2, empty3, sleepable]
 
-    #print(dict_helpers)
 
     helper_progtype_file.seek(0)
     while True:
@@ -34,7 +33,6 @@ def compile_results():
         if not line:
             break
         arr = line.split()
-        #print(arr[0]+": "+arr[4])
         if len(arr) == 6:
             if arr[5] == "yes":
                 dict_helpers[arr[0]][0].append(arr[1])

@@ -57,7 +57,6 @@ def write_params(insert_line, params):
 
 def parse_and_write_to_cubic(line):
     split_list=re.split('\(|\)|,', line)
-    #print(split_list)
     retfn_list = (split_list[0].split())
     return_type = retfn_list[1]
     if return_type=="struct":
@@ -131,13 +130,8 @@ def parse_and_write_to_cubic(line):
 
 def make(result_file):
     make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/home/priya/linux-6.9/tools/testing/selftests/bpf/', '-c', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c', '-o', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.bpf.o']
-    #make_file = open("make_result.txt", 'w')
-    #subprocess.call(make_command, stderr=make_file,  shell=False)
-    #make_file.close()
     make_result = subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
 
-    #make_file = open('make_result.txt', 'r')
-    #make_result = make_file.read().replace('\n', '')
     if 'error' in make_result:
         result_file.write(f"{'yes':<15}")
     else:
@@ -146,17 +140,11 @@ def make(result_file):
         result_file.write(f"{'yes':<15}")
     else:
         result_file.write(f"{'no':<15}")
-    #make_file.close()
 
 def run(result_file):
     run_command = ['bpftool', 'struct_ops', 'register', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.bpf.o']
-    #run_file = open("run_result.txt", "w")
-    #subprocess.call(run_command, stderr=run_file, shell=False)
-    #run_file.close()
     run_result = subprocess.run(run_command, shell = False, capture_output=True, text=True).stderr
 
-    #run_file = open("run_result.txt", "r")
-    #run_result = run_file.read().replace('\n', '')
     if 'helper call might sleep in a non-sleepable prog' in run_result:
         result_file.write(f"{'yes':15}")
     else:
@@ -166,14 +154,12 @@ def run(result_file):
         result_file.write(f"{'no'}\n")
     else:
         result_file.write(f"{'yes'}\n")
-    #run_file.close()
 
     unregister_command = ['bpftool', 'struct_ops', 'unregister', 'name', 'cubic']
     subprocess.call(unregister_command, shell=False)
 
 
 def restart_marker(marker):
-    #marker.write("* Start of BPF helper function descriptions:")
     marker = "* Start of BPF helper function descriptions:"
     return marker
 
@@ -185,12 +171,6 @@ def test_struct_ops():
     for i in range(216):
 
         helper_file = open("bpf.h", "r")
-        #marker = open("output/marker.txt", "r")
-
-        #marker_fn = marker.read()
-        #marker.close()
-
-        #marker = open("output/marker.txt", "w")
         read_start = False
         write_marker = False
 
@@ -199,7 +179,6 @@ def test_struct_ops():
             if not line:
                 break
 
-            #if marker_fn in line:   #found where we stopped last time
             if marker in line:
                 read_start = True
                 write_marker = True
@@ -212,7 +191,6 @@ def test_struct_ops():
 
             if read_start==True and re.search("^ [*] ([a-z]|[A-Z]|[_])", line):         #next fn def
                 if write_marker:            #need to keep track of where we ended
-                    #marker.write(line)
                     marker = line
                     write_marker = False
                     helper_fn = parse_and_write_to_cubic(line)
@@ -229,8 +207,6 @@ def test_struct_ops():
 
                 break
         helper_file.close()
-        #marker.close()
-
     result_file.close()
     cleanup_file()
     

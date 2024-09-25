@@ -28,16 +28,8 @@ actual_funcs = {
         }
 
 def transform_context(type_context):
-    irqs_hierarchy = {'.': 0, 'b':1, 'd':2}
-   
     for progtype in type_context:
-        if irqs_hierarchy[type_context[progtype][1]]>context_hierarchy[type_context[progtype][0]]:
-            if type_context[progtype][1] == 'b':
-                type_context[progtype] = 'S'
-            else:
-                type_context[progtype] = 'H'
-        else:
-            type_context[progtype] = type_context[progtype][0]
+        type_context[progtype] = type_context[progtype][0]
     return type_context
 
 

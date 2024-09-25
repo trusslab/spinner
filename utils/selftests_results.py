@@ -66,7 +66,6 @@ for line in lines:
     if irqs not in irqs_dict[prog_type]:
         irqs_dict[prog_type].append(irqs)
 
-#print(context_dict)
 
 hierarchy = {'NMI': 0, 'H': 1, 'S':2, 'P':3}
 for prog_type in context_dict:

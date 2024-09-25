@@ -22,9 +22,6 @@ program_types = [ 'cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/in
 
 for program_type in program_types:
 
-#    prog_type_file = open("output/prog_type.txt", "w")
-#    prog_type_file.write(program_type)
-#    prog_type_file.close()
     marker = "* Start of BPF helper function descriptions:"
     for i in range(216):
         marker = create_test(program_type, marker)

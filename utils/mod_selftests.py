@@ -13,8 +13,7 @@ skip_list = ['test_static_linked1.c', 'test_static_linked2.c', 'linked_funcs1.c'
 
 for root, dirs, files in os.walk(directory):
     for file in files:
-        print(file)
-        if file.endswith('.c'):
+        if file.endswith('dummy_st_ops_success.c'):
             f = open(os.path.join(root, file), 'r')
             mod = False
             skip = False
@@ -27,16 +26,16 @@ for root, dirs, files in os.walk(directory):
                     License = True
                     lines[i] = "char License[] SEC(\"license\") = \"Dual BSD/GPL\";\n"
                 
-                if re.match('^SEC\(\"([a-zA-Z]|\/|\?|_)', lines[i].strip()):
+                if re.match('^SEC\(\"([a-zA-Z\.]|\/|\?|_)', lines[i].strip()):
                     read_start = True
                     index_start = lines[i].index("(")
                     index_end = lines[i].index(")")
                     attach_to = lines[i][index_start+2:index_end-1]
-                
+
                 if read_start == True and "__naked" in lines[i]:
                     skip=True
 
-                if read_start == True and "." in attach_to:
+                if read_start == True and ".struct_ops" in attach_to:
                     skip= True
                 
                 if read_start == True and "{" in lines[i]:
@@ -44,14 +43,11 @@ for root, dirs, files in os.walk(directory):
                     if skip==False:
                         mod=True
                         index = lines[i].index("{")
-                        #if macro==True:
-                            #insert_line = 'bpf_printk("hello unique string"); \\'
-                        #print(attach_to) 
                         if file == "rbtree_fail.c":
                             insert_line = ''
                         elif file == 'struct_ops_multi_pages.c' and "struct_ops/tramp" in attach_to:
                             insert_line = 'bpf_printk("hello unique string struct_ops/tramp");'
-                        elif "struct_ops/test_1" not in attach_to and 'lsm/bpf' not in attach_to:
+                        else: 
                             insert_line = 'bpf_printk("hello unique string '+attach_to+'");'
                         lines[i] = lines[i][:index+1]+insert_line+lines[i][index+1:]
                     else:

@@ -1,8 +1,0 @@
-/home/priya/SVF-bpf/CMakeFiles/intrinsics_gen.dir
-/home/priya/SVF-bpf/CMakeFiles/omp_gen.dir
-/home/priya/SVF-bpf/CMakeFiles/acc_gen.dir
-/home/priya/SVF-bpf/CMakeFiles/edit_cache.dir
-/home/priya/SVF-bpf/CMakeFiles/rebuild_cache.dir
-/home/priya/SVF-bpf/src/CMakeFiles/svf-ex.dir
-/home/priya/SVF-bpf/src/CMakeFiles/edit_cache.dir
-/home/priya/SVF-bpf/src/CMakeFiles/rebuild_cache.dir
