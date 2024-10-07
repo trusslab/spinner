@@ -309,7 +309,7 @@ bool CallGraphPass::doFinalization(Module *M) {
 }
 
 bool CallGraphPass::doModulePass(Module *M) {
-	dotfile.open("src/lib/callgraph.dot");
+	dotfile.open("callgraph.dot");
   	dotfile<<"digraph \"Call Graph\"  {\n";
 	OP<<"dotfile opened\n";
 	++ MIdx;
@@ -350,4 +350,3 @@ bool CallGraphPass::doModulePass(Module *M) {
 	OP<<"dotfile closed \n";
 	return false;
 }
-

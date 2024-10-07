@@ -13,7 +13,7 @@ skip_list = ['test_static_linked1.c', 'test_static_linked2.c', 'linked_funcs1.c'
 
 for root, dirs, files in os.walk(directory):
     for file in files:
-        if file.endswith('dummy_st_ops_success.c'):
+        if file.endswith('.c'):
             f = open(os.path.join(root, file), 'r')
             mod = False
             skip = False

@@ -2,7 +2,7 @@ import networkx as nx
 import json
 from graph_nodes import get_nodes
 
-callgraph_file_name = "../mlta/src/lib/callgraph.dot"
+callgraph_file_name = "../mlta/callgraph.dot"
 node_file_name = "nodes.json"
 get_nodes(callgraph_file_name)
 
@@ -35,7 +35,9 @@ def get_name(node):
 def check_S(child_name):
     if child_name=="_raw_spin_lock":
         return True
-    elif child_name=="local_lock" or "local_lock." in child_name:
+    elif child_name=="local_lock":
+        return True
+    elif "local_lock." in child_name:
         return True
     return False
 
@@ -44,7 +46,9 @@ def check_H(child_name):
         return True
     elif child_name=="_raw_spin_lock_bh":
         return True
-    elif child_name=="local_lock" or "local_lock." in child_name:
+    elif child_name=="local_lock":
+        return True
+    elif "local_lock." in child_name:
         return True
     return False
 
@@ -73,18 +77,18 @@ def check_synchronize_rcu(child_name):
 def check_sleeping_locks(child_name):
     sleeping_locks_list = ["down", "__down", "down_interruptible", "__down_interruptible", "down_killable", "__down_killable", "down_trylock", 
             "down_timeout", "__down_timeout", "__down_common","__emit_semaphore_wait", "semaphore_notify", "bad_area_nosemaphore",
-            "__bad_area_nosemaphore", "rt_mutex_unlock", "rt_mutex_slowunlock", "rt_mutex_trylock", "rt_mutex_slowtrylock", "try_to_take_rt_mutex",
+            "__bad_area_nosemaphore", "rt_mutex_trylock", "rt_mutex_slowtrylock", "try_to_take_rt_mutex",
             "rt_mutex_lock_killable", "rt_mutex_slowlock", "__rt_mutex_slowlock", "task_blocks_on_rt_mutex", "rt_mutex_slowlock_block",
-            "rt_mutex_handle_deadlock", "rt_mutex_adjust_prio_chain", "rt_mutex_lock_interruptible", "rt_mutex_lock", "rt_mutex_base_init",
-            "__rt_mutex_init", "rt_mutex_futex_trylock", "__rt_mutex_futex_trylock", "__rt_mutex_futex_unlock", "rt_mutex_futex_unlock", 
-            "rt_mutex_postunlock", "rt_mutex_init_proxy_locked", "rt_mutex_proxy_unlock", "__rt_mutex_start_proxy_lock", "rt_mutex_start_proxy_lock",
+            "rt_mutex_handle_deadlock", "rt_mutex_adjust_prio_chain", "rt_mutex_lock_interruptible", "rt_mutex_lock",
+            "rt_mutex_futex_trylock", "__rt_mutex_futex_trylock",
+            "rt_mutex_init_proxy_locked", "__rt_mutex_start_proxy_lock", "rt_mutex_start_proxy_lock",
             "rt_mutex_wait_proxy_lock", "rt_mutex_cleanup_proxy_lock", "rt_mutex_adjust_pi", "hugetlb_fault_mutex_hash", "epoll_mutex_lock",
             "refcount_dec_and_mutex_lock", "drm_dev_needs_global_mutex", "__drmm_mutex_release", "i915_gem_shrinker_taints_mutex", "regmap_lock_mutex",
-            "regmap_unlock_mutex", "rt_mutex_setprio", "ww_mutex_unlock", "__mutex_unlock_slowpath", "ww_mutex_trylock", "__ww_mutex_check_waiters",
+            "rt_mutex_setprio", "ww_mutex_trylock", "__ww_mutex_check_waiters",
             "ww_mutex_lock_interruptible", "__ww_mutex_lock_interruptible_slowpath", "__ww_mutex_lock", "mutex_spin_on_owner", "ww_mutex_lock",
-            "__ww_mutex_lock_slowpath", "mutex_unlock", "mutex_trylock", "mutex_lock_killable", "__mutex_lock_killable_slowpath", "__mutex_lock",
+            "__ww_mutex_lock_slowpath", "mutex_trylock", "mutex_lock_killable", "__mutex_lock_killable_slowpath", "__mutex_lock",
             "mutex_lock_io", "__mutex_lock_slowpath", "mutex_lock_interruptible", "__mutex_lock_interruptible_slowpath", "mutex_lock", "mutex_is_locked",
-            "atomic_dec_and_mutex_lock", "__mutex_init"]
+            "atomic_dec_and_mutex_lock", ]
     if child_name in sleeping_locks_list:
         return True
     else:
@@ -102,14 +106,35 @@ def check_sleeping_functions(child_name):
 lock_dict = {'_raw_spin_lock': '_raw_spin_unlock', '_raw_spin_lock_bh': '_raw_spin_unlock_bh', '_raw_spin_lock_irq': '_raw_spin_unlock_irq',
         '_raw_spin_lock_irqsave': '_raw_spin_unlock_irqrestore' }
 
-skiplist = ['panic', 'machine_crash_shutdown', 'crash_kexec', 'start_kernel', 'emergency_restart', '__queue_work', 'kdb_gdb_state_pass', 'gdbstub_state',
-        'vprintk', 'vkdb_printf','__ratelimit', '___ratelimit', 'try_to_wake_up', 'vprintk_emit', '__queue_delayed_work', 'get_random_bytes', 
-        '_get_random_bytes', 'show_stack', 'kernel_text_address',  'kvfree_call_rcu', 'kvfree', 'kfree', 'vfree', 'migrate_enable', 'rcu_read_unlock.46470', 
-        'rcu_read_unlock.24024', 'check_critical_timing', 'rcu_read_unlock_special', 'start_report', 'btf_parse_vmlinux', 'dequeue_task', 'mod_timer', 'lock_acquire', 'rwsem_wake']
+skiplist = [
+        #doesn't make sense to search after these functions
+        'panic',
+        'machine_crash_shutdown', 
+        'crash_kexec', 
+        'start_kernel', 
+        'emergency_restart', 
+        #debugging functions
+        'kdb_gdb_state_pass', 
+        'gdbstub_state',
+        'vkdb_printf',  
+        'start_report',
+        'lock_acquire',
+        'register_lock_class',
+        'show_stack',
+        'kernel_text_address',
+        'kasan_save_stack'
+        #printing functions
+        'vprintk', 
+        'vprintk_emit',
+        #other
+        'btf_parse_vmlinux', #only called in process context to generate btf info for the first time
+        'migrate_enable', #bpf programs run with preemption and migration disabled so __set_cpus_allowed_ptr is never called
+        #don't want to deal with RCU
+        'rcu_read_unlock_special']
 
-def dfs_path(callgraph, source, end, parent_map):
+def dfs_path(callgraph, source, end_name, parent_map):
     path = []
-    curr = end
+    curr = end_name
     counter = 0
     while curr in parent_map:
         if curr!=None:
@@ -125,7 +150,10 @@ def dfs_path(callgraph, source, end, parent_map):
         if counter > 50:
             break
     path = path[::-1]
-    return path
+    for children in callgraph.neighbors(source):
+        if path[0]==get_name(callgraph._node[children]):
+            return path
+    return []
 
 def dfs_nx(callgraph, source, max_context, recur):
     nodes = [source]
@@ -135,7 +163,7 @@ def dfs_nx(callgraph, source, max_context, recur):
     if source in callgraph:
         source_fun_name = get_name(callgraph._node[source])
     else:
-        print(source+" not in callgraph")
+        #print(source+" not in callgraph")
         return
 
     get_children = (
@@ -215,16 +243,20 @@ def dfs_nx(callgraph, source, max_context, recur):
                         warning[0] = True
                 
                 if warning[0]:
-                    path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
+                    path = dfs_path(callgraph, source, child_fun_name, parent_map)
                     if path!=[]:
                         if source_fun_name!="bpf_snprintf_btf" or "vmalloc" not in path[0]:
-                            reports.append("WARNING: "+source_fun_name+" used "+child_fun_name+"\n"+', '.join(path))
+                            report = "WARNING: "+source_fun_name+" used "+child_fun_name+"\n"+', '.join(path)
+                            if report not in reports:
+                                reports.append(report)
 
                 if warning[1]:
-                     path = dfs_path(callgraph, source_fun_name, child_fun_name, parent_map)
+                     path = dfs_path(callgraph, source, child_fun_name, parent_map)
                      if path!=[]:
                         if source_fun_name!="bpf_snprintf_btf" or "vmalloc" not in path[0]:
-                            reports.append("WARNING: "+source_fun_name+" used "+child_fun_name+" nested issue" + "\n"+', '.join(path))
+                            report = "WARNING: "+source_fun_name+" used "+child_fun_name+" nested issue" + "\n"+', '.join(path)
+                            if report not in reports:
+                                reports.append(report)
                 
                 if child not in visited:
                     visited.add(child)
