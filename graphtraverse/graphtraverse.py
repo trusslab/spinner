@@ -122,7 +122,8 @@ skiplist = [
         'register_lock_class',
         'show_stack',
         'kernel_text_address',
-        'kasan_save_stack'
+        'kasan_save_stack',
+        '__kasan_record_aux_stack',
         #printing functions
         'vprintk', 
         'vprintk_emit',
