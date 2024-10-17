@@ -7,7 +7,7 @@ node_file_name = "nodes.json"
 get_nodes(callgraph_file_name)
 
 callgraph_linux = nx.drawing.nx_agraph.read_dot(callgraph_file_name)
-print("networkx graph created")
+#print("networkx graph created")
 
 SVF = 0 
 
@@ -59,8 +59,7 @@ def check_NMI(child_name):
         return True
     if "local_lock." in child_name or "local_lock_irqsave." in child_name or  "local_lock_irq." in child_name:
         return True
-    else:
-        return False
+    return False
 
 def check_nested_lock(child_name):
     lock_list = ["_raw_spin_lock", "_raw_spin_lock_bh", "_raw_spin_lock_irq", "_raw_spin_lock_irqsave"]
@@ -131,7 +130,9 @@ skiplist = [
         'btf_parse_vmlinux', #only called in process context to generate btf info for the first time
         'migrate_enable', #bpf programs run with preemption and migration disabled so __set_cpus_allowed_ptr is never called
         #don't want to deal with RCU
-        'rcu_read_unlock_special']
+        'rcu_read_unlock_special',
+        'kvfree_call_rcu'
+        ]
 
 def dfs_path(callgraph, source, end_name, parent_map):
     path = []
@@ -154,6 +155,10 @@ def dfs_path(callgraph, source, end_name, parent_map):
     for children in callgraph.neighbors(source):
         if path[0]==get_name(callgraph._node[children]):
             return path
+    for i in range(len(path)):
+        for children in callgraph.neighbors(source):
+            if path[i]==get_name(callgraph._node[children]):
+                return path[i:]
     return []
 
 def dfs_nx(callgraph, source, max_context, recur):
@@ -246,19 +251,17 @@ def dfs_nx(callgraph, source, max_context, recur):
                 if warning[0]:
                     path = dfs_path(callgraph, source, child_fun_name, parent_map)
                     if path!=[]:
-                        if source_fun_name!="bpf_snprintf_btf" or "vmalloc" not in path[0]:
-                            report = "WARNING: "+source_fun_name+" used "+child_fun_name+"\n"+', '.join(path)
-                            if report not in reports:
-                                reports.append(report)
+                        report = "WARNING: "+source_fun_name+" used "+child_fun_name+"\n"+', '.join(path)
+                        if report not in reports:
+                            reports.append(report)
 
                 if warning[1]:
                      path = dfs_path(callgraph, source, child_fun_name, parent_map)
                      if path!=[]:
-                        if source_fun_name!="bpf_snprintf_btf" or "vmalloc" not in path[0]:
-                            report = "WARNING: "+source_fun_name+" used "+child_fun_name+" nested issue" + "\n"+', '.join(path)
-                            if report not in reports:
-                                reports.append(report)
-                
+                        report = "WARNING: "+source_fun_name+" used "+child_fun_name+" nested issue" + "\n"+', '.join(path)
+                        if report not in reports:
+                            reports.append(report)
+                             
                 if child not in visited:
                     visited.add(child)
                     if depth_now < depth_limit:
@@ -269,7 +272,7 @@ def dfs_nx(callgraph, source, max_context, recur):
 
     for i in range(len(reports)):
         if "nested issue" in reports[i]:
-            print("RANKING 1 ",reports[i], "\n")
+            print("RANKING 1",reports[i], "\n")
         else:
             if check_nmi and max_context=="NMI":
                 print("RANKING 2",reports[i], "\n")
@@ -283,7 +286,6 @@ def dfs_nx(callgraph, source, max_context, recur):
 
 with open(node_file_name) as json_file:
     function_list_json = json.load(json_file)
-     
     for key in function_list_json:
         recur = 0
         if len(function_list_json[key])==3:
@@ -291,4 +293,3 @@ with open(node_file_name) as json_file:
         if function_list_json[key][1]!="sleepable":
             dfs_nx(callgraph_linux, key, function_list_json[key][0], recur)
     
-       

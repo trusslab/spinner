@@ -328,7 +328,6 @@ def get_nodes(graph_file_name):
             flag = False
             while True:
                 line = graph_file.readline()
-                #print(line)
                 if not line:
                     break
                 #if key in line and key==line[line.index("fun:")+5 : line.rindex("\\")]: ##for SVF gen callgraphs
@@ -336,8 +335,8 @@ def get_nodes(graph_file_name):
                     flag = True
                     #node_list[line[1:19]]=list[key] ##for SVF gen callgraphs
                     node_list[line[:line.index("[")-1]]=list[key] ##for mlta gen callgraphs
-            if flag==False:
-                print("Node matching "+key+" not found.")
+            #if flag==False:
+                #print("Node matching "+key+" not found.")
             graph_file.seek(0)
             
 

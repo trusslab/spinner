@@ -58,12 +58,12 @@ def helper_context():
                 helper_context[actual_func].append(helper_progtype[helper][3])
         
         
-    for progtype in helper_progtype['bpf_map_update_elem'][0]:
-        if progtype not in progtype_context:
-            print(progtype+" not in dynamic analysis")
+    #for progtype in helper_progtype['bpf_map_update_elem'][0]:
+        #if progtype not in progtype_context:
+            #print(progtype+" not in dynamic analysis")
    
 
-    print(helper_context)
+    #print(helper_context)
     return helper_context
 
 
