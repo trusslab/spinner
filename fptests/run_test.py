@@ -1,3 +1,4 @@
+import sys
 import subprocess
 from create_test import create_test
 from compile_results import compile_results
@@ -5,6 +6,7 @@ from test_struct_ops import test_struct_ops
 
 result_file = open('output/helper-progtype.txt','w')
 result_file.write(f"{'function_name':<40}{'program_type':<40}{'compile error':<15}{'compile warning':<15}{'sleepable':<15}{'allowed'}\n")
+uapi_file_path = sys.argv[1] + "/include/uapi/linux/bpf.h"
 
 program_types = [ 'cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ingress', 'cgroup/getsockopt', 'cgroup/setsockopt', 'cgroup/bind4',
         'cgroup/bind6', 'cgroup/connect4', 'cgroup/connect6', 'cgroup/getpeername4', 'cgroup/getpeername6', 'cgroup/getsockname4', 'cgroup/getsockname6', 
@@ -24,7 +26,7 @@ for program_type in program_types:
 
     marker = "* Start of BPF helper function descriptions:"
     for i in range(216):
-        marker = create_test(program_type, marker)
+        marker = create_test(program_type, marker, uapi_file_path)
         test_helper_fn = ''
         result_line = ''
 
@@ -82,5 +84,6 @@ for program_type in program_types:
         
 
 result_file.close()
-test_struct_ops()
+
+test_struct_ops(uapi_file_path)
 compile_results()

@@ -163,14 +163,14 @@ def restart_marker(marker):
     marker = "* Start of BPF helper function descriptions:"
     return marker
 
-def test_struct_ops():
+def test_struct_ops(uapi_file):
     result_file = open('output/helper-progtype.txt','a')
     marker = "* Start of BPF helper function descriptions:"
     prep_file()
     
     for i in range(216):
 
-        helper_file = open("bpf.h", "r")
+        helper_file = open(uapi_file, "r")
         read_start = False
         write_marker = False
 
