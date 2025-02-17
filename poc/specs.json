@@ -1,0 +1,21 @@
+[
+	{"BPF_MAP_TYPE_ARRAY": ["array_map_lookup_elem", "array_map_update_elem", "array_map_delete_elem", "bpf_for_each_array_elem"]}, 
+	{"BPF_MAP_TYPE_PERCPU_ARRAY": ["percpu_array_map_lookup_elem" , "array_map_update_elem", "array_map_delete_elem", "percpu_array_map_lookup_percpu_elem", "bpf_for_each_array_elem"]}, 
+	{"BPF_MAP_TYPE_ARRAY_OF_MAPS": ["array_of_map_lookup_elem"]}, 
+	{"BPF_MAP_TYPE_BLOOM_FILTER": ["bloom_map_push_elem", "bloom_map_peek_elem"]}, 
+	{"BPF_MAP_TYPE_HASH": ["htab_map_lookup_elem", "htab_map_update_elem", "htab_map_delete_elem", "bpf_for_each_hash_elem"]}, 
+	{"BPF_MAP_TYPE_LRU_HASH":["htab_lru_map_lookup_elem", "htab_lru_map_update_elem", "htab_lru_map_delete_elem", "bpf_for_each_hash_elem"]}, 
+	{"BPF_MAP_TYPE_PERCPU_HASH": ["htab_percpu_map_lookup_elem", "htab_percpu_map_update_elem", "htab_map_delete_elem", "htab_percpu_map_lookup_percpu_elem", "bpf_for_each_hash_elem"]}, 
+	{"BPF_MAP_TYPE_LRU_PERCPU_HASH": ["htab_lru_percpu_map_lookup_elem", "htab_lru_percpu_map_update_elem", "htab_lru_map_delete_elem", "htab_lru_percpu_map_lookup_percpu_elem", "bpf_for_each_hash_elem"]}, 
+	{"BPF_MAP_TYPE_HASH_OF_MAPS": ["htab_of_map_lookup_elem"]}, 
+	{"BPF_MAP_TYPE_LPM_TRIE": ["trie_lookup_elem", "trie_update_elem", "trie_delete_elem"]}, 
+	{"BPF_MAP_TYPE_DEVMAP": ["dev_map_lookup_elem", "dev_map_redirect", "dev_map_hash_lookup_elem", "dev_hash_map_redirect"]}, 
+	{"BPF_MAP_TYPE_SOCKMAP": ["sock_map_update_elem", "sock_map_delete_elem", "sock_map_lookup"]}, 
+	{"BPF_MAP_TYPE_SOCKHASH": ["sock_hash_delete_elem", "sock_map_update_elem", "sock_hash_lookup"]},
+        {"BPF_MAP_TYPE_CPUMAP": ["cpu_map_redirect"]},
+	{"BPF_MAP_TYPE_XSKMAP": ["xsk_map_lookup_elem", "xsk_map_redirect"]},
+	{"BPF_MAP_TYPE_STACK": ["queue_stack_map_push_elem", "stack_map_pop_elem", "stack_map_peek_elem"]},
+	{"BPF_MAP_TYPE_QUEUE": ["queue_stack_map_push_elem", "queue_map_pop_elem", "queue_map_peek_elem"]},
+	{"BPF_MAP_TYPE_RINGBUF": ["ringbuf_map_lookup_elem", "ringbuf_map_update_elem", "ringbuf_map_delete_elem"]},
+	{"BPF_MAP_TYPE_ARENA": ["arena_map_push_elem", "arena_map_peek_elem", "arena_map_pop_elem"]}
+]

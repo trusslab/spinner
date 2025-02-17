@@ -50,6 +50,7 @@ def compile_results():
             'ksyscall', 'kretsyscall', 'kprobe.multi', 'kretprobe.multi', 'uprobe', 'uprobe.s', 'uretprobe', 'uretprobe.s', 'usdt', 'fmod_ret', 
             'fmod_ret.s', 'fentry', 'fentry.s', 'fexit', 'fexit.s', 'iter', 'iter.s', 'tp_btf']
     potential_recur_funcs = []
+    precur_dict = {}
     precur_file = open("output/precur.txt", "w")
     for key in dict_helpers:
         helper_functions.append(key)
@@ -74,9 +75,13 @@ def compile_results():
                 non_tp_prog_type.append(prog_type)
         if tp and non_tp:
             result = key+" can be called by "+str(tp_prog_type)+" and "+str(non_tp_prog_type)+"\n"
+            precur_dict[key] = [tp_prog_type, non_tp_prog_type]
             potential_recur_funcs.append(result)
     precur_file.writelines(potential_recur_funcs)
     precur_file.close()
+
+    with open("output/precur.json", "w") as outfile:
+        json.dump(precur_dict, outfile)
 
     df = DataFrame({"Helper function":helper_functions, "Allowed program types" : allowed_prog_types, "Disallowed program types": disallowed_prog_types, "Needs check": needs_check, "Sleepable": sleepable_list})
 
