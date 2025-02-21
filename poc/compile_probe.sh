@@ -69,6 +69,8 @@ function find_and_write_helper_arguments {
 	probe_content+="s2e_message(\"$poc_helper\")"
 	probe_content+=$'\n'
 
+	echo "${argument_names[@]}"
+	echo "${argument_types[@]}"
 	for i in "${!argument_names[@]}"; do
 		if [[ "${argument_types[$i]}" == *"struct"* ]]; then
 			if [[ "${argument_types[$i]}" == *"*"* ]]; then

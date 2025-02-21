@@ -7,10 +7,10 @@ from find_attach import find_attach
 def get_helper(line1):
     return line1[1]
 
-def get_bug_type(line1):
-    if len(line1) == 6:
-        return 1
-    return 0
+def get_bug_type(line1): #nested locking bug reports have 6 words in line 1. Context confusion reports have 4
+    if len(line1) == 6:  
+        return 1 #nested locking bug
+    return 0 #context confusion bug
 
 def is_map_helper(helper):
     if 'elem' in helper:
@@ -112,7 +112,7 @@ def get_params(helper):
             line = helper_file.readline()
             if not line:
                 break
-            if helper in line:
+            if helper+"(" in line:
                 split_list = re.split('\(|\)|,',line)
                 retfn_list = (split_list[0].split())
                 
@@ -150,4 +150,4 @@ if __name__ == '__main__':
     helper = sys.argv[1]
     if is_map_helper(helper):
         helper = transform_map_helper(helper)
-        print(get_params(helper))
+    print(get_params(helper))

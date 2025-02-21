@@ -36,14 +36,15 @@ def generate_random_param(f,param):
         f.write(f"int {var_name[1:]} = {random.randint(0, 1000)};\n")
         return var_name
 
-    elif 'const void *' in param:
-        f.write(f"{param.split('*')[0].strip()} {param.split()[-1]} = (void*){random.randint(1000, 9999)};\n")
+    elif 'void *' in param:
+        #f.write(f"{param.split('*')[0].strip()} {param.split()[-1]} = (void*){random.randint(1000, 9999)};\n")
+        f.write("char "+param.split()[-1]+"[8];\n")
         if '*' in param.split()[-1]:
             return  param.split()[-1][1:]
         else:
             return param.split()[-1]
     
-    elif 'u64' in param:
+    elif 'u64' in param or 'u32' in param or 'u16' in param or 'u8' in param :
         f.write(f"{param} = {random.randint(0, 10)};\n")
         return param.split()[-1]
     
@@ -72,14 +73,14 @@ def generate_main(f, helper, prog_type, params, prog_number):
 if __name__ == '__main__':
     report = get_report()
     (helper, bug_type, map_type, prog_type1, prog_type2, params, orig_helper) = get_info(report)
-    
     f = open('output/poc.bpf.c', 'w')
     generate_headers(f)
-    generate_map(f, map_type)
+    if map_type:
+        generate_map(f, map_type)
     generate_main(f, helper, prog_type1, params, 1)
     generate_main(f, helper, prog_type2, params, 2)
     f.close()
 
     with open('output/poc_data.txt', 'w') as output_file:
-        output_file.write(orig_helper+" "+prog_type1+" "+prog_type2)
+        output_file.write(orig_helper+" "+prog_type1+" "+prog_type2+" "+str(bug_type))
 

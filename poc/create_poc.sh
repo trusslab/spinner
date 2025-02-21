@@ -1,7 +1,7 @@
 python3 poc.py
 if [[ -f "output/poc_data.txt" ]]; then
     	output=$(cat output/poc_data.txt)
-   	read -r helper prog_type1 prog_type2 <<< "$output"
+   	read -r helper prog_type1 prog_type2 bug_type <<< "$output"
 else
     	echo "Error: output.txt not found!"
 fi
@@ -18,5 +18,5 @@ cd output
 ./build.sh poc
 
 cd ..
-./start_s2e.sh poc $helper $nmi
+./start_s2e.sh poc $helper $nmi $bug_type
 

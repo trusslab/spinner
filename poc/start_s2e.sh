@@ -3,6 +3,7 @@ poc_dir=$(pwd)
 poc_binary=$1
 poc_helper=$2
 nmi=$3
+bug_type=$4
 
 s2e_env_dir=/home/priya/s2e-env 
 
@@ -54,6 +55,36 @@ sudo trace-cmd show > trace-cmd.txt
 \${S2ECMD} put trace-cmd.txt
 EOF
 
+
+s2e_config_file="s2e-config.lua"
+sed -i "/generateOnStateKill/d" "$s2e_config_file"
+sed -i "/generateOnSegfault/d" "$s2e_config_file"
+if [[ $bug_type==1 ]]; then
+	cat <<EOF >> "$s2e_config_file"
+
+add_plugin("DeadlockTimer")
+pluginsConfig.DeadlockTimer = {
+        startAddress = 0xffffffff81267524,
+        irqsaveLockAddress = 0xffffffff81a3ecb4,
+        irqrestoreUnlockAddress = 0xffffffff81a3efc4,
+        irqLockAddress = 0xffffffff81a3ec14,
+        irqUnlockAddress = 0xffffffff81a3ef74 ,
+        bhLockAddress = 0xffffffff81a3eb94,
+        bhUnlockAddress = 0xffffffff81a3ef34,
+        lockAddress = 0xffffffff81a3ea24,
+        unlockAddress = 0xffffffff81a3eee4,
+}
+
+EOF
+
+else 
+	cat <<EOF >> "$s2e_config_file"
+add_plugin("LockdepCheck")
+pluginsConfig.LockdepCheck = {
+	lockdepPrintAddress = 0xffffffff8111e120,
+} 
+EOF
+fi
 
 cd $poc_dir
 ./compile_probe.sh $poc_binary $poc_helper
