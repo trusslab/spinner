@@ -36,7 +36,7 @@ def write_perf_utils(f):
     f.write("\treturn ret;\n")
     f.write("}\n")
 
-def write_main_normal(f):
+def write_main_normal(f, poc_name):
     f.write("int main(int argc, char **argv)\n")
     f.write("{\n")
     f.write("int err;\n")
@@ -45,7 +45,7 @@ def write_main_normal(f):
     f.write("signal(SIGINT, sig_handler);\n")
     f.write("signal(SIGTERM, sig_handler);\n\n")
     
-    f.write("const char *obj_file1 = \"poc.bpf.o\";\n")
+    f.write("const char *obj_file1 = \""+poc_name+".bpf.o\";\n")
     f.write("struct bpf_object *obj1 = bpf_object__open_file(obj_file1, NULL);\n")
     f.write("if (!obj1)\n")
     f.write("\treturn 1;\n\n")
@@ -80,7 +80,7 @@ def write_main_normal(f):
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
 
-def write_main_perf(f):
+def write_main_perf(f, poc_name):
     f.write("int main(int argc, char **argv)\n")
     f.write("{\n")
     f.write("const char *online_cpus_file = \"/sys/devices/system/cpu/online\";\n")
@@ -113,7 +113,7 @@ def write_main_perf(f):
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
 
-    f.write("const char *obj_file1 = \"poc.bpf.o\";\n")
+    f.write("const char *obj_file1 = \""+poc_name+"poc.bpf.o\";\n")
     f.write("struct bpf_object *obj1 = bpf_object__open_file(obj_file1, NULL);\n")
     f.write("if (!obj1)\n")
     f.write("\treturn 1;\n\n")
@@ -189,9 +189,9 @@ def write_ending(f):
 
 
 
-def write_loader(prog_type1, prog_type2):
+def write_loader(prog_type1, prog_type2, poc_name):
     print(prog_type1+" "+prog_type2)
-
+    
     perf = 0
     if prog_type1 == 'perf_event':
         perf = 1
@@ -200,7 +200,7 @@ def write_loader(prog_type1, prog_type2):
     if 'kprobe' in prog_type1 and 'my_nmi_handler' in prog_type1:
         knmi = 1
     
-    file = open("output/poc.c", "w")
+    file = open("output/"+poc_name+".c", "w")
 
     write_headers(file)
     if perf:
@@ -213,9 +213,9 @@ def write_loader(prog_type1, prog_type2):
         write_perf_utils(file)
     
     if perf:
-        write_main_perf(file)
+        write_main_perf(file, poc_name)
     else:
-        write_main_normal(file)
+        write_main_normal(file, poc_name)
     
     if knmi:
         write_trigger_nmi(file)
@@ -223,6 +223,6 @@ def write_loader(prog_type1, prog_type2):
     write_ending(file)
 
 if __name__ == "__main__":
-    write_loader(sys.argv[1], sys.argv[2])
+    write_loader(sys.argv[1], sys.argv[2], sys.argv[3])
 
 

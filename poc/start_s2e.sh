@@ -51,15 +51,36 @@ sudo dmesg > dmesg.txt
 uname -r > uname.txt
 \${S2ECMD} put uname.txt
 
-sudo trace-cmd show > trace-cmd.txt
-\${S2ECMD} put trace-cmd.txt
+sudo cp /var/log/syslog syslog.txt
+sudo chmod 777 syslog.txt
+${S2ECMD} put syslog.txt
+
+sudo cp /proc/lockdep lockdep.txt
+sudo chmod 777 lockdep.txt
+${S2ECMD} put lockdep.txt
+
+sudo cp /proc/lockdep_chains lockdep_chains.txt
+sudo chmod 777 lockdep_chains.txt
+${S2ECMD} put lockdep_chains.txt
+
+sudo cp /proc/lockdep_stats lockdep_stats.txt
+sudo chmod 777 lockdep_stats.txt
+${S2ECMD} put lockdep_stats.txt
+
+sudo cp /proc/lock_stat lock_stat.txt
+sudo chmod 777 lock_stat.txt
+${S2ECMD} put lock_stat.txt
+
+sudo cp /proc/locks locks.txt
+sudo chmod 777 locks.txt
+${S2ECMD} put locks.txt
 EOF
 
 
 s2e_config_file="s2e-config.lua"
 sed -i "/generateOnStateKill/d" "$s2e_config_file"
 sed -i "/generateOnSegfault/d" "$s2e_config_file"
-if [[ $bug_type==1 ]]; then
+if [[ $bug_type == 1 ]]; then
 	cat <<EOF >> "$s2e_config_file"
 
 add_plugin("DeadlockTimer")
