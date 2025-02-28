@@ -28,22 +28,11 @@ def generate_kfunc_signature(f, kfunc):
     f.write(f"{kfunc_params}")
     f.write(") __ksym;")
 
-def generate_map(f, map_type, extra):
-    timer = extra[0]
-    spin_lock = extra[1]
-
-    f.write("struct map_elem {\n")
-    f.write("int counter;\n")
-    if timer:
-        f.write("struct bpf_timer timer;\n")
-    if spin_lock:
-        f.write("struct bpf_spin_lock lock;\n")
-    f.write("};\n\n")
-
+def generate_map(f, map_type):
     f.write("struct {\n")
     f.write("__uint(type, "+map_type+");\n")
     f.write("__type(key, int);\n")
-    f.write("__type(value, struct map_elem);\n")
+    f.write("__type(value, int);\n")
     f.write("__uint(max_entries, 25);\n")
     f.write("} this_map SEC(\".maps\");\n\n")
 
@@ -70,6 +59,8 @@ def generate_random_param(f,param):
 
     elif 'void *' in param:
         #f.write(f"{param.split('*')[0].strip()} {param.split()[-1]} = (void*){random.randint(1000, 9999)};\n")
+        if param.split()[-1][1:]=="ctx":
+            return param.split()[-1][1:]
         f.write("char "+param.split()[-1]+"[8];\n")
         if '*' in param.split()[-1]:
             return  param.split()[-1][1:]
@@ -120,13 +111,7 @@ if __name__ == '__main__':
     if kfunc:
         generate_kfunc_signature(f,helper)
     if map_type:
-        tracing_prog_types = ['kprobe', 'perf_event', 'tp', 'tracepoint', "raw_tp.w",
-                "raw_tracepoint.w", "raw_tp", "raw_tracepoint"]
-        for prog_type in tracing_prog_types:     #tracing prog types cannot use bpf timers or spin locks
-            if prog_type in prog_type1 or prog_type in prog_type2:
-                generate_map(f, map_type, [0, 0])
-            else
-                generate_map(f, map_type, [1, 1])
+        generate_map(f, map_type)
 
     generate_main(f, helper, prog_type1, params, 1)
     generate_main(f, helper, prog_type2, params, 2)

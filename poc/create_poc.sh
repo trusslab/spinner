@@ -20,5 +20,5 @@ cd output
 ./build.sh $poc_name
 
 cd ..
-#./start_s2e.sh $poc_name $helper $nmi $bug_type
+./start_s2e.sh $poc_name $helper $nmi $bug_type
 
