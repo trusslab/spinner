@@ -23,6 +23,8 @@ def is_kfunc(helper):
 def is_map_helper(helper):
     if 'elem' in helper:
         return 1
+    elif helper=="bpf_cgrp_storage_delete" or helper=="bpf_cgrp_storage_get" or helper=="bpf_get_stackid" or helper=="bpf_get_stack":
+        return 1
     return 0
 
 def is_timer_or_spinlock(helper):
@@ -48,8 +50,14 @@ def transform_map_helper(helper):
         return 'bpf_map_delete_elem'
     elif 'lookup_elem' in helper:
         return 'bpf_map_lookup_elem'
+    elif 'push_elem' in helper:
+        return 'bpf_map_push_elem'
+    elif 'pop_elem' in helper:
+        return 'bpf_map_pop_elem'
+    elif 'peek_elem' in helper:
+        return 'bpf_map_peek_elem'
     else:
-        print("Unknown function")
+        #print("Unknown function")
         return helper
 
 def get_possible_prog_types_kfunc(kfunc):
@@ -105,27 +113,29 @@ def get_prog_type_cc(helper):
 def get_lock_type(line):
     return line[-1]
 
-def get_pre_function(line):
+def get_pre_function(line, orig_helper):
     if len(line)>=2:
         return line[-2][:-1]
+    else:
+        return orig_helper 
 
 def get_possible_prog_types_nl(helper):
     with open('/home/priya/defogger/fptests/output/precur.json', 'r') as precur_file:
         precur = json.load(precur_file)
         return precur[helper][0]
 
-def get_prog_type_nl(helper, report_line, lock_type):
+def get_prog_type_nl(helper, report_line, lock_type, orig_helper):
     if is_kfunc(helper):
         possible_prog_types=get_possible_prog_types_kfunc(helper)
     else:
         possible_prog_types = get_possible_prog_types_nl(helper)
  
-    if 'kprobe' in possible_prog_types:
-        prog_type = 'kprobe'
+    if 'fentry' in possible_prog_types:
+        prog_type = 'fentry'
     elif 'tracepoint' in possible_prog_types:
         prog_type = 'tracepoint'
-    elif 'fentry' in possible_prog_types:
-        prog_type = 'fentry'
+    elif 'kprobe' in possible_prog_types:
+        prog_type = 'kprobe'
     else:
         print('edge case: need to reexamine')
         return possible_prog_types[0]
@@ -140,9 +150,11 @@ def get_prog_type_nl(helper, report_line, lock_type):
             prog_type = 'fentry'
     
     while attach_point == 'none' and report_line:
-        pre_function = get_pre_function(report_line)
+        pre_function = get_pre_function(report_line, orig_helper)
         attach_point = find_attach(pre_function, prog_type, lock_type)
         report_line = report_line[:-1]
+    if attach_point == 'none':
+        return 'tracepoint/lock/lock_acquired'
     return prog_type+"/"+attach_point
 
 def get_prog_type_secondary(helper):
@@ -219,7 +231,7 @@ def get_info(report):
             prog_type1 = get_prog_type_cc(helper)
     else:
             lock_type = get_lock_type(line2)
-            prog_type1 = get_prog_type_nl(helper, line2, lock_type)
+            prog_type1 = get_prog_type_nl(helper, line2, lock_type, orig_helper)
     
     print( helper, bug_type, map_type, prog_type1, prog_type2, params, orig_helper, kfunc)
     return ( helper, bug_type, map_type, prog_type1, prog_type2, params, orig_helper, kfunc)

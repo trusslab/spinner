@@ -53,28 +53,51 @@ uname -r > uname.txt
 
 sudo cp /var/log/syslog syslog.txt
 sudo chmod 777 syslog.txt
-${S2ECMD} put syslog.txt
+\${S2ECMD} put syslog.txt
 
 sudo cp /proc/lockdep lockdep.txt
 sudo chmod 777 lockdep.txt
-${S2ECMD} put lockdep.txt
+\${S2ECMD} put lockdep.txt
 
 sudo cp /proc/lockdep_chains lockdep_chains.txt
 sudo chmod 777 lockdep_chains.txt
-${S2ECMD} put lockdep_chains.txt
+\${S2ECMD} put lockdep_chains.txt
 
 sudo cp /proc/lockdep_stats lockdep_stats.txt
 sudo chmod 777 lockdep_stats.txt
-${S2ECMD} put lockdep_stats.txt
+\${S2ECMD} put lockdep_stats.txt
 
 sudo cp /proc/lock_stat lock_stat.txt
 sudo chmod 777 lock_stat.txt
-${S2ECMD} put lock_stat.txt
+\${S2ECMD} put lock_stat.txt
 
 sudo cp /proc/locks locks.txt
 sudo chmod 777 locks.txt
-${S2ECMD} put locks.txt
+\${S2ECMD} put locks.txt
 EOF
+
+nm_result=$(nm -n guestfs/vmlinux | grep $poc_helper)
+function_address="${nm_result%% *}"
+
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock_irqsave")
+irqsaveLockAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock_irqrestore")
+irqrestoreUnlockAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock_irq")
+irqLockAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock_irq")
+irqUnlockAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock_bh")
+bhLockAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock_bh")
+bhUnlockAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock")
+lockAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock")
+unlockAddress="${nm_result%% *}"
+
+nm_result=$(nm -n guestfs/vmlinux | grep "print_usage_bug")
+printUsageBugAddress="${nm_result%% *}"
 
 
 s2e_config_file="s2e-config.lua"
@@ -85,27 +108,33 @@ if [[ $bug_type == 1 ]]; then
 
 add_plugin("DeadlockTimer")
 pluginsConfig.DeadlockTimer = {
-        startAddress = 0xffffffff81267524,
-        irqsaveLockAddress = 0xffffffff81a3ecb4,
-        irqrestoreUnlockAddress = 0xffffffff81a3efc4,
-        irqLockAddress = 0xffffffff81a3ec14,
-        irqUnlockAddress = 0xffffffff81a3ef74 ,
-        bhLockAddress = 0xffffffff81a3eb94,
-        bhUnlockAddress = 0xffffffff81a3ef34,
-        lockAddress = 0xffffffff81a3ea24,
-        unlockAddress = 0xffffffff81a3eee4,
+        startAddress = 0x$function_address,
+        irqsaveLockAddress = 0x$irqsaveLockAddress,
+        irqrestoreUnlockAddress = 0x$irqrestoreUnlockAddress,
+        irqLockAddress = 0x$irqLockAddress,
+        irqUnlockAddress = 0x$irqUnlockAddress,
+        bhLockAddress = 0x$bhLockAddress,
+        bhUnlockAddress = 0x$bhUnlockAddress,
+        lockAddress = 0x$lockAddress,
+        unlockAddress = 0x$unlockAddress,
 }
 
+add_plugin("ForkEBPF")
 EOF
 
 else 
 	cat <<EOF >> "$s2e_config_file"
 add_plugin("LockdepCheck")
 pluginsConfig.LockdepCheck = {
-	lockdepPrintAddress = 0xffffffff8111e120,
+	lockdepPrintAddress = $printUsageBugAddress,
 } 
+
+add_plugin("ForkEBPF")
 EOF
 fi
+
+s2e_launch_file="launch-s2e.sh"
+sed -i 's/^export S2E_MAX_PROCESSES=[0-9]*$/export S2E_MAX_PROCESSES=48/' "$s2e_launch_file"
 
 cd $poc_dir
 ./compile_probe.sh $poc_binary $poc_helper
