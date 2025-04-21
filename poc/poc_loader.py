@@ -36,7 +36,7 @@ def write_perf_utils(f):
     f.write("\treturn ret;\n")
     f.write("}\n")
 
-def write_main_normal(f, poc_name):
+def write_main_normal(f, poc_name, extra):
     f.write("int main(int argc, char **argv)\n")
     f.write("{\n")
     f.write("int err;\n")
@@ -68,6 +68,13 @@ def write_main_normal(f, poc_name):
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
 
+    if extra:
+        f.write("struct bpf_program *prog3 = bpf_object__find_program_by_name(obj1, \"test_prog3\");\n")
+        f.write("if (!prog3) {\n")
+        f.write("\tfprintf(stderr, \"Error finding BPF program by title\\n\");\n")
+        f.write("\tgoto cleanup;\n")
+        f.write("}\n\n")
+
     f.write("struct bpf_link *link1 = bpf_program__attach(prog1);\n")
     f.write("if (!link1) {\n")
     f.write("\tfprintf(stderr, \"Error attaching prog1\\n\");\n")
@@ -80,11 +87,18 @@ def write_main_normal(f, poc_name):
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
 
+    if extra:
+        f.write("struct bpf_link *link3 = bpf_program__attach(prog3);\n")
+        f.write("if (!link3) {\n")
+        f.write("\tfprintf(stderr, \"Error attaching prog3\\n\");\n")
+        f.write("\tgoto cleanup;\n")
+        f.write("}\n\n")
+
     f.write("int i;\n")
     f.write("for (i=0; i<4; i+=1) { sleep(3); }\n\n")
 
 
-def write_main_perf(f, poc_name):
+def write_main_perf(f, poc_name, extra):
     f.write("int main(int argc, char **argv)\n")
     f.write("{\n")
     f.write("const char *online_cpus_file = \"/sys/devices/system/cpu/online\";\n")
@@ -141,6 +155,12 @@ def write_main_perf(f, poc_name):
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
 
+    if extra:
+        f.write("struct bpf_program *prog3 = bpf_object__find_program_by_name(obj1, \"test_prog3\");\n")
+        f.write("if (!prog3) {\n")
+        f.write("\tfprintf(stderr, \"Error finding BPF program by title\\n\");\n")
+        f.write("\tgoto cleanup;\n")
+        f.write("}\n\n")
 
     f.write("struct bpf_link *link1 = bpf_program__attach_perf_event(prog1, pefd);\n")
     f.write("if (!link1) {\n")
@@ -151,9 +171,16 @@ def write_main_perf(f, poc_name):
 
     f.write("struct bpf_link *link2 = bpf_program__attach(prog2);\n")
     f.write("if (!link2) {\n")
-    f.write("\tfprintf(stderr, \"Error attaching kprobe\\n\");\n")
+    f.write("\tfprintf(stderr, \"Error attaching prog2\\n\");\n")
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
+
+    if extra:
+        f.write("struct bpf_link *link3 = bpf_program__attach(prog3);\n")
+        f.write("if (!link3) {\n")
+        f.write("\tfprintf(stderr, \"Error attaching prog3\\n\");\n")
+        f.write("\tgoto cleanup;\n")
+        f.write("}\n\n")
 
     f.write("int i;\n")
     f.write("for (i=0; i<4; i+=1) { sleep(3); }\n\n")
@@ -182,10 +209,12 @@ def write_trigger_nmi(f):
 
 
 
-def write_ending(f): 
+def write_ending(f, extra): 
     f.write("printf(\"Started successfully\");\n")
     f.write("bpf_link__destroy(link1);\n")
     f.write("bpf_link__destroy(link2);\n\n")
+    if extra:
+        f.write("bpf_link__destroy(link3);\n\n")
 
     f.write("cleanup:\n")
     f.write("bpf_object__close(obj1);\n")
@@ -195,7 +224,7 @@ def write_ending(f):
 
 
 
-def write_loader(prog_type1, prog_type2, poc_name):
+def write_loader(prog_type1, prog_type2, poc_name, helper):
     print(prog_type1+" "+prog_type2)
     
     perf = 0
@@ -205,6 +234,10 @@ def write_loader(prog_type1, prog_type2, poc_name):
     knmi = 0
     if 'kprobe' in prog_type1 and 'my_nmi_handler' in prog_type1:
         knmi = 1
+
+    extra = 0
+    if helper=="bpf_cgrp_storage_get" or helper=="bpf_cgrp_storage_delete":
+        extra = 1
     
     file = open("output/"+poc_name+".c", "w")
 
@@ -219,16 +252,16 @@ def write_loader(prog_type1, prog_type2, poc_name):
         write_perf_utils(file)
     
     if perf:
-        write_main_perf(file, poc_name)
+        write_main_perf(file, poc_name, extra)
     else:
-        write_main_normal(file, poc_name)
+        write_main_normal(file, poc_name, extra)
     
     if knmi:
         write_trigger_nmi(file)
 
-    write_ending(file)
+    write_ending(file, extra)
 
 if __name__ == "__main__":
-    write_loader(sys.argv[1], sys.argv[2], sys.argv[3])
+    write_loader(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
 
 

@@ -66,7 +66,16 @@ def generate_map(f, map_type):
         f.write("__uint(max_entries, 256 * 1024);\n")
         f.write("} this_map SEC(\".maps\");\n\n")
         return
-    
+   
+    if map_type == "BPF_MAP_TYPE_CGRP_STORAGE":
+        f.write("struct {\n")
+        f.write("__uint(type, BPF_MAP_TYPE_CGRP_STORAGE);\n")
+        f.write("__uint(map_flags, BPF_F_NO_PREALLOC);\n")
+        f.write("__type(key, int);\n")
+        f.write("__type(value, int);\n")
+        f.write("} this_map SEC(\".maps\");\n\n")
+        return
+
     f.write("struct {\n")
     f.write("__uint(type, "+map_type+");\n")
     if map_type != "BPF_MAP_TYPE_QUEUE" and map_type!= "BPF_MAP_TYPE_STACK":
@@ -85,6 +94,9 @@ def generate_pid_map(f):
     f.write("int flag=0;\n\n")
 
 def generate_random_param(f,param, map_type):
+    if 'void' == param:
+        return ''
+    
     if 'struct bpf_map *' in param or "ringbuf" in param:
         return "&this_map"
 
@@ -123,6 +135,8 @@ def generate_random_param(f,param, map_type):
             return  param.split()[-1][1:]
         else:
             return param.split()[-1]
+    elif 'struct cgroup' in param and map_type=="BPF_MAP_TYPE_CGRP_STORAGE":
+        return "cg"
     
     elif 'flags' in param:
         f.write("u64 flags = 0;\n")
@@ -211,6 +225,34 @@ def generate_main_nl_2(f, helper, prog_type, params, prog_number, map_type):
     f.write("}\n\n");
 
 
+def generate_cgroup_main(f, helper, prog_type, params, prog_number, map_type):
+    f.write("SEC(\""+prog_type+"\")\n")
+    f.write("int test_prog"+str(prog_number)+"(void *ctx){\n")
+    f.write("int cg_id = bpf_get_current_cgroup_id();\n")
+    f.write("struct cgroup *cg = bpf_cgroup_from_id(cg_id);\n")
+    f.write("if (cg){\n")
+
+    param_names = generate_params(f, helper, params[1], params[0], map_type)
+
+    f.write("bpf_cgroup_release(cg);\n")
+    f.write("}\n")
+    f.write("return 0;\n")
+    f.write("}\n\n")
+
+def write_cgrp_storage_template(f, helper, bug_type, prog_type1, prog_type2, params, map_type):
+    generate_kfunc_signature(f, "bpf_cgroup_from_id")
+    generate_kfunc_signature(f, "bpf_cgroup_release")
+
+    if bug_type==0:
+        generate_main_cc(f, "bpf_get_current_pid_tgid", prog_type1, ['u64',['void']], 1, "none")
+        generate_cgroup_main(f, helper, "fentry/bpf_get_current_pid_tgid", params, 2, map_type)
+        generate_cgroup_main(f, helper, prog_type2, params, 3, map_type)
+
+    else:
+        generate_cgroup_main(f, helper, prog_type1, params, 1, map_type)
+        generate_cgroup_main(f, helper, prog_type2, params, 2, map_type)
+
+
 if __name__ == '__main__':
     poc_name=sys.argv[1]
     number = re.findall(r'\d+', poc_name)[0] 
@@ -225,14 +267,18 @@ if __name__ == '__main__':
     if map_type:
         generate_map(f, map_type)
 
-    if bug_type == 0:
-        generate_main_cc(f, helper, prog_type1, params, 1, map_type)
-        generate_main_cc(f, helper, prog_type2, params, 2, map_type)
-
+    if helper=="bpf_cgrp_storage_get" or helper=="bpf_cgrp_storage_delete":
+        write_cgrp_storage_template(f, helper, bug_type, prog_type1, prog_type2, params, map_type)
+    
     else:
-        generate_pid_map(f)
-        generate_main_nl_1(f, helper, prog_type1, params, 1, map_type)
-        generate_main_nl_2(f, helper, prog_type2, params, 2, map_type)
+        if bug_type == 0:
+            generate_main_cc(f, helper, prog_type1, params, 1, map_type)
+            generate_main_cc(f, helper, prog_type2, params, 2, map_type)
+
+        else:
+            generate_pid_map(f)
+            generate_main_nl_1(f, helper, prog_type1, params, 1, map_type)
+            generate_main_nl_2(f, helper, prog_type2, params, 2, map_type)
     f.close()
 
     with open('output/poc_data.txt', 'w') as output_file:

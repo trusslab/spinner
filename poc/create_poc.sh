@@ -8,7 +8,7 @@ else
     	echo "Error: output.txt not found!"
 fi
 
-python3 poc_loader.py $prog_type1 $prog_type2 $poc_name
+python3 poc_loader.py $prog_type1 $prog_type2 $poc_name $helper
 
 if [[ "$prog_type1" == *"nmi"* ]]; then
 	nmi=1
