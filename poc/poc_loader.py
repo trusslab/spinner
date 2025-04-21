@@ -80,6 +80,10 @@ def write_main_normal(f, poc_name):
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
 
+    f.write("int i;\n")
+    f.write("for (i=0; i<4; i+=1) { sleep(3); }\n\n")
+
+
 def write_main_perf(f, poc_name):
     f.write("int main(int argc, char **argv)\n")
     f.write("{\n")
@@ -151,6 +155,10 @@ def write_main_perf(f, poc_name):
     f.write("\tgoto cleanup;\n")
     f.write("}\n\n")
 
+    f.write("int i;\n")
+    f.write("for (i=0; i<4; i+=1) { sleep(3); }\n\n")
+
+
 def write_trigger_nmi(f):
     f.write("int fd;\n")
     f.write("const char *data = \"1\";\n")
@@ -176,8 +184,6 @@ def write_trigger_nmi(f):
 
 def write_ending(f): 
     f.write("printf(\"Started successfully\");\n")
-    f.write("int i;\n")
-    f.write("for (i=0; i<4; i+=1) { sleep(3); }\n")
     f.write("bpf_link__destroy(link1);\n")
     f.write("bpf_link__destroy(link2);\n\n")
 

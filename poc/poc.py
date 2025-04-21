@@ -26,7 +26,7 @@ def generate_kfunc_signature(f, kfunc):
     kfunc_params = ', '.join(kfunc_signature[1])
     f.write(f"extern {kfunc_signature[0]} {kfunc} (")
     f.write(f"{kfunc_params}")
-    f.write(") __ksym;")
+    f.write(") __ksym;\n\n")
 
 def generate_map(f, map_type):
     if map_type == "BPF_MAP_TYPE_LPM_TRIE":
@@ -41,15 +41,29 @@ def generate_map(f, map_type):
         f.write("__type(value, int);\n")
         f.write("__uint(map_flags, BPF_F_NO_PREALLOC);\n")
         f.write("__uint(max_entries, 255);\n")
-        f.write("} this_map SEC(\".maps\");\n")
+        f.write("} this_map SEC(\".maps\");\n\n")
         return 
     
     if map_type == "BPF_MAP_TYPE_STACK_TRACE":
+        f.write("typedef struct bpf_stack_build_id stack_trace_t[127];\n")
+
         f.write("struct {\n")
         f.write("__uint(type, "+map_type+");\n")
-        f.write("__type(key, __u32)")
-        f.write("__type(value, __64);\n")
+        f.write("__type(key, __u32);\n")
+        f.write("__type(value, stack_trace_t);\n")
+        f.write("__uint(map_flags, BPF_F_STACK_BUILD_ID);\n")
         f.write("__uint(max_entries, 8);\n")
+        f.write("} this_map SEC(\".maps\");\n\n")
+        return
+
+    if map_type == "BPF_MAP_TYPE_RINGBUF":
+        f.write("struct ringbuf_data {\n")
+        f.write("\tint data;\n")
+        f.write("};\n\n")
+
+        f.write("struct {\n")
+        f.write("__uint(type, BPF_MAP_TYPE_RINGBUF);\n")
+        f.write("__uint(max_entries, 256 * 1024);\n")
         f.write("} this_map SEC(\".maps\");\n\n")
         return
     
@@ -67,10 +81,11 @@ def generate_pid_map(f):
     f.write("__type(key, u32);\n")
     f.write("__type(value, u32);\n")
     f.write("__uint(max_entries, 1024);\n")
-    f.write("} pid_map SEC(\".maps\");\n")
+    f.write("} pid_map SEC(\".maps\");\n\n")
+    f.write("int flag=0;\n\n")
 
 def generate_random_param(f,param, map_type):
-    if 'struct bpf_map *' in param:
+    if 'struct bpf_map *' in param or "ringbuf" in param:
         return "&this_map"
 
     if 'key' in param.split()[-1]:
@@ -113,6 +128,10 @@ def generate_random_param(f,param, map_type):
         f.write("u64 flags = 0;\n")
         return param.split()[-1]
 
+    elif 'size' in param and map_type == "BPF_MAP_TYPE_RINGBUF":
+        f.write("u64 size = sizeof(struct ringbuf_data);")
+        return "size"
+
     elif 'int' in param or 'u64' in param or 'u32' in param or 'u16' in param or 'u8' in param:
         f.write(f"{param} = {random.randint(0, 10)};\n")
         return param.split()[-1]
@@ -127,6 +146,15 @@ def generate_random_param(f,param, map_type):
         else:
             return param.split()[-1]
 
+def special_case(f, helper, function_call_params, map_type):
+    fcall = "struct ringbuf_data *rdata1 = "+f"{helper}({function_call_params});\n"
+    fcall += "if (!rdata1) {\n"
+    fcall += "return 0;\n"
+    fcall += "}\n"
+    fcall += "rdata1->data = 2;\n"
+    fcall += "bpf_ringbuf_submit(rdata1, 0);\n"
+    return fcall
+
 def generate_params(f, helper, params, return_type, map_type):
     var_names = [generate_random_param(f,param, map_type) for param in params]
     function_call_params = ', '.join(var_names)
@@ -134,6 +162,8 @@ def generate_params(f, helper, params, return_type, map_type):
     if 'void' !=return_type:
         function_call += return_type+" ret = "
     function_call += f"{helper}({function_call_params});"
+    if helper == "bpf_ringbuf_reserve":
+        function_call = special_case(f, helper, function_call_params, map_type)
     f.write("\n"+function_call+"\n")
 
 def generate_main_cc(f, helper, prog_type, params, prog_number, map_type):
@@ -147,15 +177,19 @@ def generate_main_cc(f, helper, prog_type, params, prog_number, map_type):
 def generate_main_nl_1(f, helper, prog_type, params, prog_number, map_type):
     f.write("SEC(\""+prog_type+"\")\n")
     f.write("int test_prog"+str(prog_number)+"(void *ctx){\n")
-    f.write("bpf_printk(\"bpf_prog "+str(prog_number)+"\");\n")
-        
+            
     f.write("u32 pid = bpf_get_current_pid_tgid() >> 32;\n")
     f.write("u32 *stored_pid = bpf_map_lookup_elem(&pid_map, &pid);\n")
-    f.write("if (!stored_pid) {\n")
+    f.write("if (!stored_pid  || pid==0) {\n")
+    f.write("\treturn 0;\n")
+    f.write("}\n\n")
+
+    f.write("if (flag==0) {\n")
     f.write("\treturn 0;\n")
     f.write("}\n\n")
     
     param_names = generate_params(f, helper, params[1], params[0], map_type)
+    f.write("bpf_printk(\"bpf_prog "+str(prog_number)+"\");\n")
 
     f.write("return 0;\n");
     f.write("}\n\n");
@@ -164,11 +198,14 @@ def generate_main_nl_2(f, helper, prog_type, params, prog_number, map_type):
     f.write("SEC(\""+prog_type+"\")\n")
     f.write("int test_prog"+str(prog_number)+"(void *ctx){\n")
     f.write("bpf_printk(\"bpf_prog "+str(prog_number)+"\");\n")
+    f.write("flag = 1;\n")
 
     f.write("u32 pid = bpf_get_current_pid_tgid() >> 32;\n")
     f.write("bpf_map_update_elem(&pid_map, &pid, &pid, BPF_ANY);\n")
-
+    
     param_names = generate_params(f, helper, params[1], params[0], map_type)
+
+    f.write("bpf_map_delete_elem(&pid_map, &pid);\n")
 
     f.write("return 0;\n");
     f.write("}\n\n");

@@ -30,13 +30,13 @@ sed -i '/S2E_SO="${TARGET_TOOLS64_ROOT}\/s2e.so"/a \
     sudo chmod u+s ${TARGET}' "$bootstrap_file"
 
 sed -i '/prepare_target "${TARGET_PATH}"/a \
-	${S2ECMD} get probe.ko\
-	sudo staprun probe.ko -L' "$bootstrap_file"
+${S2ECMD} get probe.ko\
+sudo staprun probe.ko -L' "$bootstrap_file"
 
 if [[ $nmi==1 ]]; then
 	sed -i '/prepare_target "${TARGET_PATH}"/a \
-		${S2ECMD} get nmi_example.ko \
-		sudo insmod nmi_example.ko' "$bootstrap_file"
+	${S2ECMD} get nmi_example.ko \
+	sudo insmod nmi_example.ko' "$bootstrap_file"
 fi
 
 cat <<EOF >> "$bootstrap_file"
@@ -91,13 +91,16 @@ nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock_bh")
 bhLockAddress="${nm_result%% *}"
 nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock_bh")
 bhUnlockAddress="${nm_result%% *}"
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_lock$")
 lockAddress="${nm_result%% *}"
 nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock")
 unlockAddress="${nm_result%% *}"
 
 nm_result=$(nm -n guestfs/vmlinux | grep "print_usage_bug")
 printUsageBugAddress="${nm_result%% *}"
+nm_result=$(nm -n guestfs/vmlinux | grep "print_lock_invalid_wait_context")
+#printInvalidWaitBugAddress="${nm_result%% *}"
+printInvalidWaitBugAddress="ffffffff811200d3"
 
 
 s2e_config_file="s2e-config.lua"
@@ -120,16 +123,19 @@ pluginsConfig.DeadlockTimer = {
 }
 
 add_plugin("ForkEBPF")
+add_plugin("ExceptionTracer")
 EOF
 
 else 
 	cat <<EOF >> "$s2e_config_file"
 add_plugin("LockdepCheck")
 pluginsConfig.LockdepCheck = {
-	lockdepPrintAddress = $printUsageBugAddress,
+	lockdepUsageBugAddress = 0x$printUsageBugAddress,
+	lockdepInvalidWaitAddress = 0x$printInvalidWaitBugAddress,
 } 
 
 add_plugin("ForkEBPF")
+add_plugin("ExceptionTracer")
 EOF
 fi
 

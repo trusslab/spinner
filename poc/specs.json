@@ -16,7 +16,7 @@
 	{"BPF_MAP_TYPE_XSKMAP": ["xsk_map_lookup_elem", "xsk_map_redirect"]},
 	{"BPF_MAP_TYPE_STACK": ["queue_stack_map_push_elem", "stack_map_pop_elem", "stack_map_peek_elem"]},
 	{"BPF_MAP_TYPE_QUEUE": ["queue_stack_map_push_elem", "queue_map_pop_elem", "queue_map_peek_elem"]},
-	{"BPF_MAP_TYPE_RINGBUF": ["ringbuf_map_lookup_elem", "ringbuf_map_update_elem", "ringbuf_map_delete_elem"]},
+	{"BPF_MAP_TYPE_RINGBUF": ["ringbuf_map_lookup_elem", "ringbuf_map_update_elem", "ringbuf_map_delete_elem", "bpf_ringbuf_reserve", "bpf_ringbuf_submit", "bpf_ringbuf_output"]},
 	{"BPF_MAP_TYPE_ARENA": ["arena_map_push_elem", "arena_map_peek_elem", "arena_map_pop_elem"]},
 	{"BPF_MAP_TYPE_CGRP_STORAGE": ["bpf_cgrp_storage_delete", "bpf_cgrp_storage_get"]},
 	{"BPF_MAP_TYPE_STACK_TRACE": ["bpf_get_stackid", "bpf_get_stack"]}

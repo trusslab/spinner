@@ -23,7 +23,8 @@ static struct dentry *nmi_debugfs_trigger;
 void my_nmi_print_function(void);
 
 void my_nmi_print_function() {
-	pr_info("nmi handler");
+	//pr_info("nmi handler");
+	;
 }
 
 static int my_nmi_handler(unsigned int val, struct pt_regs *regs)

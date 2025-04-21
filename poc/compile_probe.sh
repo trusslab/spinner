@@ -128,8 +128,13 @@ function find_and_write_helper_arguments {
 		else
 			if [[ "${argument_types[$i]}" == *"*"* ]]; then
 				object_type="${argument_types[$i]//\*/}"
-				main_function_content+="s2e_make_symbolic(\$${argument_names[$i]}, %{sizeof($object_type)%}, \"${argument_names[$i]}\")"
-                        	main_function_content+=$'\n'
+				if [[ "$object_type" == "void " ]]; then
+					main_function_content+="s2e_make_symbolic(\$${argument_names[$i]}, 1, \"${argument_names[$i]}\")"
+					main_function_content+=$'\n'
+				else
+					main_function_content+="s2e_make_symbolic(\$${argument_names[$i]}, %{sizeof($object_type)%}, \"${argument_names[$i]}\")"
+                        		main_function_content+=$'\n'
+				fi
 			fi
 		fi
 
@@ -148,4 +153,4 @@ cd $s2e_project_dir
 write_s2e_functions
 find_and_write_helper_arguments
 
-docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i /home/priya/s2e/images/.tmp-output/linux-6.8.2-x86_64/*.deb && cd $s2e_project_dir	&& sudo stap -a x86_64 -r 6.8.2-s2e -g -m probe probe.stp -F && cd /home/priya/defogger/poc/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 
+docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i /home/priya/s2e/images/.tmp-output/linux-6.8.2-x86_64/*.deb && cd $s2e_project_dir && sudo stap -a x86_64 -r 6.8.2-s2e -g -m probe probe.stp -F && cd /home/priya/defogger/poc/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 

@@ -1,12 +1,23 @@
 #!/bin/bash
 
+<<com
 if [[ -z "$1" ]]; then
     input_file="../graphtraverse/file69"
 else
     input_file="$1"
 fi
+com
 
-counter=1
+input_file="../graphtraverse/file69"
+report="all"
+
+while getopts "i:r:" opt; do
+    case "$opt" in
+        i) input_file="$OPTARG" ;;  # Assign value for -i (input_file)
+        r) report="$OPTARG" ;;  # Assign value for -r (report)
+        ?) echo "Usage: $0 [-i input_file] [-r report]"; exit 1 ;;
+    esac
+done
 
 # Ensure the input file exists
 if [[ ! -f "$input_file" ]]; then
@@ -14,24 +25,44 @@ if [[ ! -f "$input_file" ]]; then
     exit 1
 fi
 
-# Read the file line by line
-while IFS= read -r line1; do
-    # Read 2 more lines if available
-    IFS= read -r line2 || line2=""
-    IFS= read -r line3 || line3=""
+if [[ $report == "all" ]]; then
+	counter=1
+	# Read the file line by line
+	while IFS= read -r line1; do
+    		# Read 2 more lines if available
+    		IFS= read -r line2 || line2=""
+    		IFS= read -r line3 || line3=""
 
-    # Create output file for each 3-line set
-    output_file="output/report$counter.txt"
-    echo "$line1" > "$output_file"
-    [[ -n "$line2" ]] && echo "$line2" >> "$output_file"
-    [[ -n "$line3" ]] && echo "$line3" >> "$output_file"
-    # Run the create_poc.sh script
-    ./create_poc.sh "poc$counter"&
-    wait
-    # Uncomment this line if you want to remove the file after processing
-    # rm "$output_file"
+    		# Create output file for each 3-line set
+    		output_file="output/report$counter.txt"
+    		echo "$line1" > "$output_file"
+    		[[ -n "$line2" ]] && echo "$line2" >> "$output_file"
+    		[[ -n "$line3" ]] && echo "$line3" >> "$output_file"
+    		# Run the create_poc.sh script
+    		./create_poc.sh "poc$counter"&
+    		wait
+    		# Uncomment this line if you want to remove the file after processing
+    		# rm "$output_file"
 
-    echo $counter
-    # Increment the counter for each batch of 3 lines
-    ((counter++))
-done < "$input_file"
+    		echo $counter
+    		# Increment the counter for each batch of 3 lines
+    		((counter++))
+	done < "$input_file"
+else
+	line1_number=$((report * 3 - 2))
+	line2_number=$((report * 3 - 1))
+	line3_number=$((report * 3))
+
+
+	line1=$(sed -n "${line1_number}p" "$input_file")
+	line2=$(sed -n "${line2_number}p" "$input_file")
+	line3=$(sed -n "${line3_number}p" "$input_file")
+
+	output_file="output/report$report.txt"
+	echo "$line1" > "$output_file"
+	echo "$line2" >> "$output_file"
+	echo "$line3" >> "$output_file"
+	./create_poc.sh "poc$report"&
+	wait
+fi
+

@@ -25,6 +25,8 @@ def is_map_helper(helper):
         return 1
     elif helper=="bpf_cgrp_storage_delete" or helper=="bpf_cgrp_storage_get" or helper=="bpf_get_stackid" or helper=="bpf_get_stack":
         return 1
+    elif helper=="bpf_ringbuf_reserve" or helper=="bpf_ringbuf_output" or helper=="bpf_ringbuf_submit":
+        return 1
     return 0
 
 def is_timer_or_spinlock(helper):
