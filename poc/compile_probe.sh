@@ -115,10 +115,13 @@ function find_and_write_helper_arguments {
 
 	for i in "${!argument_names[@]}"; do
 		echo "${argument_types[$i]} ${argument_names[$i]}" 
-		if [[ "${argument_names[$i]}" == "map" ]]; then
+		if [[ "${argument_names[$i]}" == "map" || "${argument_names[$i]}" == "ringbuf" ]]; then
 			write_inject_symbolic_map_fields
 			main_function_content+="s2e_inject_symbolic_map_fields(\$map);"
 			main_function_content+=$'\n'
+		elif [[ "${argument_names[$i]}" == "key" && ( "$poc_helper" == "trie_delete_elem" || "$poc_helper" == "trie_update_elem" ) ]]; then
+			main_function_content+="s2e_make_symbolic(\$_key, %{sizeof(int) %}, \"key\");"
+                        main_function_content+=$'\n'
 		elif [[ "${argument_names[$i]}" == "key" ]]; then
 			main_function_content+="s2e_make_symbolic(\$key, %{sizeof(int) %}, \"key\");"
 			main_function_content+=$'\n'
@@ -128,7 +131,11 @@ function find_and_write_helper_arguments {
 		else
 			if [[ "${argument_types[$i]}" == *"*"* ]]; then
 				object_type="${argument_types[$i]//\*/}"
-				if [[ "$object_type" == "void " ]]; then
+				if [[ "${argument_names[$i]}" == "ctx" && ( "$poc_helper" == "bpf_get_stack" || "$poc_helper" == "bpf_get_stackid" ) ]]; then
+					main_function_content+=$'\n'
+				elif [[ "$poc_helper" == "bpf_probe_write_user" && "${argument_names[$i]}" == "dst" ]]; then
+					main_function_content+=$'\n'
+				elif [[ "$object_type" == "const void " || "$object_type" == "void " ]]; then
 					main_function_content+="s2e_make_symbolic(\$${argument_names[$i]}, 1, \"${argument_names[$i]}\")"
 					main_function_content+=$'\n'
 				else
@@ -153,4 +160,4 @@ cd $s2e_project_dir
 write_s2e_functions
 find_and_write_helper_arguments
 
-docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i /home/priya/s2e/images/.tmp-output/linux-6.8.2-x86_64/*.deb && cd $s2e_project_dir && sudo stap -a x86_64 -r 6.8.2-s2e -g -m probe probe.stp -F && cd /home/priya/defogger/poc/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 
+docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i /home/priya/s2e/images/.tmp-output/linux-6.9.0-x86_64/*.deb && cd $s2e_project_dir && sudo stap -a x86_64 -r 6.9.0-s2e -g -m probe probe.stp -F && cd /home/priya/defogger/poc/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 

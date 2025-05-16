@@ -84,9 +84,12 @@ def generate_map(f, map_type):
     f.write("__uint(max_entries, 25);\n")
     f.write("} this_map SEC(\".maps\");\n\n")
 
-def generate_pid_map(f):
+def generate_pid_map(f, map_type):
     f.write("struct {\n")
-    f.write("__uint(type, BPF_MAP_TYPE_HASH);\n")
+    if map_type == "BPF_MAP_TYPE_HASH":
+        f.write("__uint(type, BPF_MAP_TYPE_LRU_HASH);\n")
+    else:
+        f.write("__uint(type, BPF_MAP_TYPE_HASH);\n")
     f.write("__type(key, u32);\n")
     f.write("__type(value, u32);\n")
     f.write("__uint(max_entries, 1024);\n")
@@ -176,7 +179,7 @@ def generate_params(f, helper, params, return_type, map_type):
     if 'void' !=return_type:
         function_call += return_type+" ret = "
     function_call += f"{helper}({function_call_params});"
-    if helper == "bpf_ringbuf_reserve":
+    if helper == "bpf_ringbuf_reserve" or helper=="bpf_ringbuf_reserve_dynptr":
         function_call = special_case(f, helper, function_call_params, map_type)
     f.write("\n"+function_call+"\n")
 
@@ -243,23 +246,24 @@ def write_cgrp_storage_template(f, helper, bug_type, prog_type1, prog_type2, par
     generate_kfunc_signature(f, "bpf_cgroup_from_id")
     generate_kfunc_signature(f, "bpf_cgroup_release")
 
-    if bug_type==0:
-        generate_main_cc(f, "bpf_get_current_pid_tgid", prog_type1, ['u64',['void']], 1, "none")
-        generate_cgroup_main(f, helper, "fentry/bpf_get_current_pid_tgid", params, 2, map_type)
-        generate_cgroup_main(f, helper, prog_type2, params, 3, map_type)
-
-    else:
-        generate_cgroup_main(f, helper, prog_type1, params, 1, map_type)
-        generate_cgroup_main(f, helper, prog_type2, params, 2, map_type)
+    generate_main_cc(f, "bpf_get_current_pid_tgid", prog_type1, ['u64',['void']], 1, "none")
+    generate_cgroup_main(f, helper, "fentry/bpf_get_current_pid_tgid", params, 2, map_type)
+    generate_cgroup_main(f, helper, prog_type2, params, 3, map_type)
 
 
 if __name__ == '__main__':
     poc_name=sys.argv[1]
-    number = re.findall(r'\d+', poc_name)[0] 
+    pref = sys.argv[2]
+    number = re.findall(r'\d+', poc_name)[0]
     report_file = "output/report"+number+".txt"
     report = get_report(report_file)
+    
+    (helper, bug_type, map_type, prog_type1, prog_type2, params, orig_helper, kfunc) = get_info(report, pref)
+    if not prog_type1 or not prog_type2:
+        with open('output/poc_data.txt', 'w') as output_file:
+            output_file.write("fail")
+        sys.exit()
 
-    (helper, bug_type, map_type, prog_type1, prog_type2, params, orig_helper, kfunc) = get_info(report)
     f = open('output/'+poc_name+'.bpf.c', 'w')
     generate_headers(f)
     if kfunc:
@@ -276,7 +280,7 @@ if __name__ == '__main__':
             generate_main_cc(f, helper, prog_type2, params, 2, map_type)
 
         else:
-            generate_pid_map(f)
+            generate_pid_map(f, map_type)
             generate_main_nl_1(f, helper, prog_type1, params, 1, map_type)
             generate_main_nl_2(f, helper, prog_type2, params, 2, map_type)
     f.close()

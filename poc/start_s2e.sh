@@ -74,26 +74,29 @@ sudo chmod 777 lock_stat.txt
 sudo cp /proc/locks locks.txt
 sudo chmod 777 locks.txt
 \${S2ECMD} put locks.txt
+
+sudo ./$poc_binary > output.txt 2>&1
+\${S2ECMD} put output.txt
 EOF
 
-nm_result=$(nm -n guestfs/vmlinux | grep $poc_helper)
+nm_result=$(nm -n guestfs/vmlinux | grep " $poc_helper$")
 function_address="${nm_result%% *}"
 
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock_irqsave")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_lock_irqsave$")
 irqsaveLockAddress="${nm_result%% *}"
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock_irqrestore")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_unlock_irqrestore$")
 irqrestoreUnlockAddress="${nm_result%% *}"
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock_irq")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_lock_irq$")
 irqLockAddress="${nm_result%% *}"
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock_irq")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_unlock_irq$")
 irqUnlockAddress="${nm_result%% *}"
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_lock_bh")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_lock_bh$")
 bhLockAddress="${nm_result%% *}"
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock_bh")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_unlock_bh$")
 bhUnlockAddress="${nm_result%% *}"
 nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_lock$")
 lockAddress="${nm_result%% *}"
-nm_result=$(nm -n guestfs/vmlinux | grep "_raw_spin_unlock")
+nm_result=$(nm -n guestfs/vmlinux | grep " _raw_spin_unlock$")
 unlockAddress="${nm_result%% *}"
 
 nm_result=$(nm -n guestfs/vmlinux | grep "print_usage_bug")
@@ -141,6 +144,7 @@ fi
 
 s2e_launch_file="launch-s2e.sh"
 sed -i 's/^export S2E_MAX_PROCESSES=[0-9]*$/export S2E_MAX_PROCESSES=48/' "$s2e_launch_file"
+sed -i 's|trap "kill \$CHILD_PID" SIGINT|trap "kill -TERM -\$CHILD_PID" SIGINT SIGTERM SIGHUP|' "$s2e_launch_file"
 
 cd $poc_dir
 ./compile_probe.sh $poc_binary $poc_helper

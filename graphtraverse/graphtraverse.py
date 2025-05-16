@@ -120,8 +120,8 @@ def dfs_path(callgraph, source, end_name, parent_map):
             if curr in path:
                 index = path.index(curr)
                 path=path[:index]
-            if curr in skiplist:
-                return []
+            #if curr in skiplist:
+                #return []
             path.append(curr)
 
         curr = parent_map[curr]
@@ -129,9 +129,9 @@ def dfs_path(callgraph, source, end_name, parent_map):
         if counter > 50:
             break
     path = path[::-1]
-    for func in path:
-        if func in skiplist:
-            return []
+    #for func in path:
+        #if func in skiplist:
+            #return []
     for children in callgraph.neighbors(source):
         if path[0]==get_name(callgraph._node[children]):
             return path

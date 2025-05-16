@@ -2,19 +2,20 @@
 
 <<com
 if [[ -z "$1" ]]; then
-    input_file="../graphtraverse/file69"
+    input_file="../graphtraverse/file_complete"
 else
     input_file="$1"
 fi
 com
 
-input_file="../graphtraverse/file69"
+input_file="../graphtraverse/file_complete"
 report="all"
 
-while getopts "i:r:" opt; do
+while getopts "i:r:p:" opt; do
     case "$opt" in
         i) input_file="$OPTARG" ;;  # Assign value for -i (input_file)
         r) report="$OPTARG" ;;  # Assign value for -r (report)
+	p) pref="$OPTARG" ;; # preferred prog type for nested locking bug
         ?) echo "Usage: $0 [-i input_file] [-r report]"; exit 1 ;;
     esac
 done
@@ -62,7 +63,33 @@ else
 	echo "$line1" > "$output_file"
 	echo "$line2" >> "$output_file"
 	echo "$line3" >> "$output_file"
-	./create_poc.sh "poc$report"&
-	wait
+
+	if [[ "$line1" == *nested* ]]; then
+		if [[ "$pref" == kprobe ]]; then
+			./create_poc.sh "poc${report}_kprobe" "kprobe"&
+                	wait
+		elif [[ "$pref" == fentry ]]; then
+			./create_poc.sh "poc${report}_fentry" "fentry"&
+			wait
+		elif [[ "$pref" == fentry_unlock ]]; then
+			./create_poc.sh "poc${report}_fentry_unlock" "fentry/unlock"&
+			wait
+		elif [[ "$pref" == tracepoint ]]; then
+			./create_poc.sh "poc${report}_tracepoint" "tracepoint"&
+			wait
+		else 
+			./create_poc.sh "poc${report}_kprobe" "kprobe"&
+			wait
+			./create_poc.sh "poc${report}_fentry" "fentry"&
+			wait
+			./create_poc.sh "poc${report}_fentry_unlock" "fentry/unlock"&
+			wait
+			./create_poc.sh "poc${report}_tracepoint" "tracepoint"&
+			wait
+		fi
+	else
+		./create_poc.sh "poc$report" "none"&
+		wait
+	fi
 fi
 

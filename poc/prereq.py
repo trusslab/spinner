@@ -25,7 +25,7 @@ def is_map_helper(helper):
         return 1
     elif helper=="bpf_cgrp_storage_delete" or helper=="bpf_cgrp_storage_get" or helper=="bpf_get_stackid" or helper=="bpf_get_stack":
         return 1
-    elif helper=="bpf_ringbuf_reserve" or helper=="bpf_ringbuf_output" or helper=="bpf_ringbuf_submit":
+    elif helper=="bpf_ringbuf_reserve" or helper=="bpf_ringbuf_output" or helper=="bpf_ringbuf_submit" or helper=="bpf_ringbuf_reserve_dynptr":
         return 1
     return 0
 
@@ -126,34 +126,36 @@ def get_possible_prog_types_nl(helper):
         precur = json.load(precur_file)
         return precur[helper][0]
 
-def get_prog_type_nl(helper, report_line, lock_type, orig_helper):
+def get_prog_type_nl(helper, report_line, lock_type, orig_helper, pref):
     if is_kfunc(helper):
         possible_prog_types=get_possible_prog_types_kfunc(helper)
     else:
         possible_prog_types = get_possible_prog_types_nl(helper)
- 
-    if 'fentry' in possible_prog_types:
+    
+    if 'kprobe' in possible_prog_types and pref=="kprobe":
+        prog_type = 'kprobe'  
+    elif 'fentry' in possible_prog_types and pref=="fentry":
         prog_type = 'fentry'
-    elif 'tracepoint' in possible_prog_types:
+    elif 'fentry' in possible_prog_types and pref=="fentry/unlock":
+        prog_type = 'fentry'   
+    elif 'tracepoint' in possible_prog_types and pref=="tracepoint":
         prog_type = 'tracepoint'
-    elif 'kprobe' in possible_prog_types:
-        prog_type = 'kprobe'
     else:
-        print('edge case: need to reexamine')
-        return possible_prog_types[0]
+        print("skip test case")
+        return ''
     attach_point = 'none'
 
     #check if map timer or spin lock needs to be used
     if is_timer_or_spinlock(helper):
         if 'fentry' not in possible_prog_types:
             print('false positive: no possible way to trigger bug since tracing programs cannot use timers or spinlocks')
-            return possible_prog_types[0]
+            return ''
         else:
             prog_type = 'fentry'
     
     while attach_point == 'none' and report_line:
         pre_function = get_pre_function(report_line, orig_helper)
-        attach_point = find_attach(pre_function, prog_type, lock_type)
+        attach_point = find_attach(pre_function, prog_type, lock_type, pref)
         report_line = report_line[:-1]
     if attach_point == 'none':
         return 'tracepoint/lock/lock_acquired'
@@ -209,7 +211,7 @@ def get_params_kfunc(helper):
             params = kfuncs_data[helper][1]
             return (return_type, params)
 
-def get_info(report):
+def get_info(report, pref):
     line1 = report[0]
     line2 = report[1]
     helper = get_helper(line1)
@@ -233,7 +235,7 @@ def get_info(report):
             prog_type1 = get_prog_type_cc(helper)
     else:
             lock_type = get_lock_type(line2)
-            prog_type1 = get_prog_type_nl(helper, line2, lock_type, orig_helper)
+            prog_type1 = get_prog_type_nl(helper, line2, lock_type, orig_helper, pref)
     
     print( helper, bug_type, map_type, prog_type1, prog_type2, params, orig_helper, kfunc)
     return ( helper, bug_type, map_type, prog_type1, prog_type2, params, orig_helper, kfunc)

@@ -1,5 +1,5 @@
 CUR_DIR = $(shell pwd)
-LLVM_BUILD := ../llvm-project/prefix
+LLVM_BUILD := /usr/lib/llvm-14
 ANALYZER_DIR := ${CUR_DIR}/src
 ANALYZER_BUILD := ${CUR_DIR}/build
 

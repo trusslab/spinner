@@ -16,7 +16,7 @@ def disassemble_function(function):
 
     return output
 
-def find_attach(function, program_type, lock_type):
+def find_attach(function, program_type, lock_type, pref):
     if program_type == 'tracepoint':
         return "lock/lock_acquired"
     
@@ -37,6 +37,8 @@ def find_attach(function, program_type, lock_type):
                 '_raw_spin_lock_irq' : '_raw_spin_unlock_irq', 
                 '_raw_spin_lock_bh': '_raw_spin_unlock_bh', 
                 '_raw_spin_lock': '_raw_spin_unlock'}
+        if pref=="fentry/unlock":
+            return lock_dict[lock_type]
         start_read = False
         for i in range(len(instrs)):
             if lock_type in instrs[i]:

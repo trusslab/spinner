@@ -1,8 +1,8 @@
 # Configurations
 
-KERNEL_SRC="$(pwd)/../linux-5.15"
+KERNEL_SRC="$(pwd)/../kernels/linux"
 IRDUMPER="$(pwd)/IRDumper/build/lib/libDumper.so"
-CLANG="/usr/bin/clang"
+CLANG="$(pwd)/llvm-project/prefix/bin/clang"
 CONFIG="defconfig"
 #CONFIG="allyesconfig"
 
@@ -19,7 +19,7 @@ if [ ! -f "$KERNEL_SRC/Makefile.bak" ]; then
 fi
 
 # The new flags better follow "# Add user supplied CPPFLAGS, AFLAGS and CFLAGS as the last assignments"
-echo $NEW_CMD >$KERNEL_SRC/IRDumper.cmd
+echo -e $NEW_CMD >$KERNEL_SRC/IRDumper.cmd
 cat $KERNEL_SRC/Makefile.bak $KERNEL_SRC/IRDumper.cmd >$KERNEL_SRC/Makefile
 
 cd $KERNEL_SRC && make $CONFIG
