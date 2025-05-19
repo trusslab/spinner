@@ -1,1 +1,0 @@
-savedcmd_/home/priya/defogger/poc/nmi_example/nmi_example.ko := ld -r -m elf_x86_64 -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T scripts/module.lds -o /home/priya/defogger/poc/nmi_example/nmi_example.ko /home/priya/defogger/poc/nmi_example/nmi_example.o /home/priya/defogger/poc/nmi_example/nmi_example.mod.o

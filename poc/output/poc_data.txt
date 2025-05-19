@@ -1,1 +1,0 @@
-htab_map_update_elem kprobe/my_nmi_handler fentry/do_nanosleep

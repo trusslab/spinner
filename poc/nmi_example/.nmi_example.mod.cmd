@@ -1,1 +1,0 @@
-savedcmd_/home/priya/defogger/poc/nmi_example/nmi_example.mod := printf '%s\n'   nmi_example.o | awk '!x[$$0]++ { print("/home/priya/defogger/poc/nmi_example/"$$0) }' > /home/priya/defogger/poc/nmi_example/nmi_example.mod

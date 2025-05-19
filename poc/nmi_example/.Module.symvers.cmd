@@ -1,1 +1,0 @@
-savedcmd_/home/priya/defogger/poc/nmi_example/Module.symvers :=  scripts/mod/modpost -M -m       -o /home/priya/defogger/poc/nmi_example/Module.symvers -T /home/priya/defogger/poc/nmi_example/modules.order -i Module.symvers -e 
