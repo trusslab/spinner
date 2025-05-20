@@ -15,6 +15,8 @@ You will need to build a linux kernel from source with BTF information included.
 Steps to run:
 1) First install necessary dependencies:
 	./install_dependencies.sh
+	cd mlta
+	./build-llvm.sh
 2) Run context analysis:
 	./run_selftests.sh path/to/kernel/source
 3) Run API analysis:
@@ -24,6 +26,7 @@ Steps to run:
 	<write the path to your vmlinux.bc file in bc.list>
 	cd ..
 	./run_mlta.sh 
+The generated callgraph should be found in mlta/callgraph.dot
 5) Generate bug reports:
 	./run_graphtraverse.sh path/to/callgraph
 
