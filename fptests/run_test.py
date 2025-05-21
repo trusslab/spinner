@@ -9,8 +9,6 @@ result_file.write(f"{'function_name':<40}{'program_type':<40}{'compile error':<1
 kdir = sys.argv[1]
 uapi_file_path = kdir + "/include/uapi/linux/bpf.h"
 
-program_types = [ 'freplace/print' ]
-'''
 program_types = [ 'cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ingress', 'cgroup/getsockopt', 'cgroup/setsockopt', 'cgroup/bind4',
         'cgroup/bind6', 'cgroup/connect4', 'cgroup/connect6', 'cgroup/getpeername4', 'cgroup/getpeername6', 'cgroup/getsockname4', 'cgroup/getsockname6', 
         'cgroup/recvmsg4', 'cgroup/sendmsg4', 'cgroup/recvmsg6', 'cgroup/sendmsg6', 'cgroup/connect_unix', 'cgroup/sendmsg_unix', 'cgroup/recvmsg_unix', 
@@ -24,7 +22,6 @@ program_types = [ 'cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/in
         'tp/sched/sched_switch', 'tracepoint/sched/sched_switch', 'fmod_ret/bpf_modify_return_test', 'fmod_ret.s/bpf_fentry_test1', 'fentry/do_nanosleep', 
         'fentry.s/bpf_fentry_test1', 'fexit/do_nanosleep', 'fexit.s/bpf_fentry_test1', 'freplace/print', 'iter/tcp', 'iter.s/cgroup', 'tp_btf/task_newtask',
         'xdp.frags/cpumap', 'xdp/cpumap', 'xdp.frags/devmap', 'xdp/devmap', 'xdp', 'xdp.frags']
-'''
 
 for program_type in program_types:
 
