@@ -115,10 +115,10 @@ def parse_and_write_to_cubic(line, cubic_file):
     f = open (cubic_file, "r")
     readlines = f.readlines()
     for i in range(len(readlines)):
-        if re.search('bpf_cubic_init\"', readlines[i]):
+        if re.search('BPF_PROG\(bpf_cubic_init', readlines[i]):
             print(i)
-            readlines[i+3] = first_line
-            readlines[i+4] = insert_line
+            readlines[i+2] = first_line
+            readlines[i+3] = insert_line
             break
     f.close()
 
@@ -146,7 +146,6 @@ def make(result_file, kdir, cubic_file, cubic_object):
 def run(result_file, cubic_object):
     run_command = ['bpftool', 'struct_ops', 'register', cubic_object]
     run_result = subprocess.run(run_command, shell = False, capture_output=True, text=True).stderr
-
     if 'helper call might sleep in a non-sleepable prog' in run_result:
         result_file.write(f"{'yes':15}")
     else:

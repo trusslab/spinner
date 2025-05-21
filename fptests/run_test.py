@@ -9,6 +9,8 @@ result_file.write(f"{'function_name':<40}{'program_type':<40}{'compile error':<1
 kdir = sys.argv[1]
 uapi_file_path = kdir + "/include/uapi/linux/bpf.h"
 
+program_types = [ 'freplace/print' ]
+'''
 program_types = [ 'cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ingress', 'cgroup/getsockopt', 'cgroup/setsockopt', 'cgroup/bind4',
         'cgroup/bind6', 'cgroup/connect4', 'cgroup/connect6', 'cgroup/getpeername4', 'cgroup/getpeername6', 'cgroup/getsockname4', 'cgroup/getsockname6', 
         'cgroup/recvmsg4', 'cgroup/sendmsg4', 'cgroup/recvmsg6', 'cgroup/sendmsg6', 'cgroup/connect_unix', 'cgroup/sendmsg_unix', 'cgroup/recvmsg_unix', 
@@ -22,6 +24,7 @@ program_types = [ 'cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/in
         'tp/sched/sched_switch', 'tracepoint/sched/sched_switch', 'fmod_ret/bpf_modify_return_test', 'fmod_ret.s/bpf_fentry_test1', 'fentry/do_nanosleep', 
         'fentry.s/bpf_fentry_test1', 'fexit/do_nanosleep', 'fexit.s/bpf_fentry_test1', 'freplace/print', 'iter/tcp', 'iter.s/cgroup', 'tp_btf/task_newtask',
         'xdp.frags/cpumap', 'xdp/cpumap', 'xdp.frags/devmap', 'xdp/devmap', 'xdp', 'xdp.frags']
+'''
 
 for program_type in program_types:
 
@@ -51,18 +54,20 @@ for program_type in program_types:
             written_prog_type = written_prog_type.split('/')[0]
         result_file.write(f"{written_prog_type:<40}")
 
-       
+        make_result='' 
         if program_type == "freplace/print":
             make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/usr/include/linux', '-I/usr/include/bpf/', '-I/usr/local/include/bpf/', '-c', 'output/freplace2.bpf.c', '-o', 'output/freplace2.bpf.o']
-        else:
-            make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/usr/include/linux', '-I/usr/include/bpf/', '-I/usr/local/include/bpf/', '-c', 'output/test.bpf.c', '-o', 'output/test.bpf.o']
-
-        make_result = subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
+            make_result += subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
+        
+        make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/usr/include/linux', '-I/usr/include/bpf/', '-I/usr/local/include/bpf/', '-c', 'output/test.bpf.c', '-o', 'output/test.bpf.o']
+        make_result += subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
+        
         if program_type == "freplace/print":
             make_command = ['gcc', '-L/usr/lib64/', '-o', 'output/freplace', 'output/freplace.c', '-lbpf']
         else:
             make_command = ['gcc', '-L/usr/lib64/', '-o', 'output/test', 'output/test.c', '-lbpf']
         make_result += subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
+        
         print(make_result)
         if 'error' in make_result:
             result_file.write(f"{'yes':<15}")
