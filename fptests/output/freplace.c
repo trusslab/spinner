@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <stdbool.h>
 #include <sys/resource.h>
 #include <bpf/libbpf.h>
