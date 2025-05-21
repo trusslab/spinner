@@ -1,10 +1,12 @@
 import re
 import subprocess
+import sys
+
 
 utypes = ['u8', 'u16', 'u32', 'u64', 's8', 's16', 's32', 's64']
 
-def prep_file():
-    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "r")
+def prep_file(cubic_file):
+    f = open (cubic_file, "r")
     readlines = f.readlines()
     for i in range(len(readlines)):
         if 'void BPF_PROG(bpf_cubic_init, struct sock *sk)' in readlines[i]:
@@ -12,12 +14,12 @@ def prep_file():
                 readlines.insert(i+2, '//\n')
             break
     f.close()
-    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "w")
+    f = open (cubic_file, "w")
     f.writelines(readlines)
     f.close()
 
-def cleanup_file():
-    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "r")
+def cleanup_file(cubic_file):
+    f = open (cubic_file, "r")
     readlines = f.readlines()
     for i in range(len(readlines)):
         if 'void BPF_PROG(bpf_cubic_init, struct sock *sk)' in readlines[i]:
@@ -25,7 +27,7 @@ def cleanup_file():
                 readlines.pop(i+2)
             break
     f.close()
-    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "w")
+    f = open (cubic_file, "w")
     f.writelines(readlines)
     f.close()
 
@@ -55,7 +57,7 @@ def write_params(insert_line, params):
             insert_line+="=0;"
     return insert_line
 
-def parse_and_write_to_cubic(line):
+def parse_and_write_to_cubic(line, cubic_file):
     split_list=re.split('\(|\)|,', line)
     retfn_list = (split_list[0].split())
     return_type = retfn_list[1]
@@ -110,7 +112,7 @@ def parse_and_write_to_cubic(line):
         insert_line+="if (ret) {bpf_printk(\"hello\");}\n"
 
 
-    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "r")
+    f = open (cubic_file, "r")
     readlines = f.readlines()
     for i in range(len(readlines)):
         if re.search('bpf_cubic_init\"', readlines[i]):
@@ -120,7 +122,7 @@ def parse_and_write_to_cubic(line):
             break
     f.close()
 
-    f = open ("/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c", "w")
+    f = open (cubic_file, "w")
     f.writelines(readlines)
     f.close()
 
@@ -128,8 +130,8 @@ def parse_and_write_to_cubic(line):
 
 
 
-def make(result_file):
-    make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/home/priya/linux-6.9/tools/testing/selftests/bpf/', '-c', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.c', '-o', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.bpf.o']
+def make(result_file, kdir, cubic_file, cubic_object):
+    make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I'+kdir+'/tools/testing/selftests/bpf/', '-c', cubic_file, '-o', cubic_object]
     make_result = subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
 
     if 'error' in make_result:
@@ -141,8 +143,8 @@ def make(result_file):
     else:
         result_file.write(f"{'no':<15}")
 
-def run(result_file):
-    run_command = ['bpftool', 'struct_ops', 'register', '/home/priya/linux-6.9/tools/testing/selftests/bpf/progs/bpf_cubic.bpf.o']
+def run(result_file, cubic_object):
+    run_command = ['bpftool', 'struct_ops', 'register', cubic_object]
     run_result = subprocess.run(run_command, shell = False, capture_output=True, text=True).stderr
 
     if 'helper call might sleep in a non-sleepable prog' in run_result:
@@ -163,10 +165,13 @@ def restart_marker(marker):
     marker = "* Start of BPF helper function descriptions:"
     return marker
 
-def test_struct_ops(uapi_file):
+def test_struct_ops(kdir):
+    uapi_file = kdir + "/include/uapi/linux/bpf.h" 
+    cubic_file = kdir + "/tools/testing/selftests/bpf/progs/bpf_cubic.c"
+    cubic_object = kdir + "/tools/testing/selftests/bpf/progs/bpf_cubic.bpf.o"
     result_file = open('output/helper-progtype.txt','a')
     marker = "* Start of BPF helper function descriptions:"
-    prep_file()
+    prep_file(cubic_file)
     
     for i in range(216):
 
@@ -193,7 +198,7 @@ def test_struct_ops(uapi_file):
                 if write_marker:            #need to keep track of where we ended
                     marker = line
                     write_marker = False
-                    helper_fn = parse_and_write_to_cubic(line)
+                    helper_fn = parse_and_write_to_cubic(line, cubic_file)
                 
                     if not helper_fn:
                         break
@@ -202,14 +207,15 @@ def test_struct_ops(uapi_file):
                     result_file.write(f"{helper_fn:<40}")
                     result_file.write(f"{program_type:<40}")
                 
-                    make(result_file)
-                    run(result_file)
+                    make(result_file, kdir, cubic_file, cubic_object)
+                    run(result_file, cubic_object)
 
                 break
         helper_file.close()
     result_file.close()
-    cleanup_file()
+    cleanup_file(cubic_file)
     
 
 if __name__ == "__main__":
-    test_struct_ops()
+    kdir = sys.argv[1]
+    test_struct_ops(kdir)

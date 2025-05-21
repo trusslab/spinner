@@ -37,7 +37,7 @@ def write_end(f):
     f.write("}\n")
 
 def create_test(attach_to, marker, uapi_file):
-    f = open ("/home/priya/defogger/fptests/output/test.bpf.c", "w")
+    f = open ("output/test.bpf.c", "w")
     helper_file = open(uapi_file, "r")
     
 

@@ -6,7 +6,8 @@ from test_struct_ops import test_struct_ops
 
 result_file = open('output/helper-progtype.txt','w')
 result_file.write(f"{'function_name':<40}{'program_type':<40}{'compile error':<15}{'compile warning':<15}{'sleepable':<15}{'allowed'}\n")
-uapi_file_path = sys.argv[1] + "/include/uapi/linux/bpf.h"
+kdir = sys.argv[1]
+uapi_file_path = kdir + "/include/uapi/linux/bpf.h"
 
 program_types = [ 'cgroup/dev', 'cgroup/skb','cgroup_skb/egress', 'cgroup_skb/ingress', 'cgroup/getsockopt', 'cgroup/setsockopt', 'cgroup/bind4',
         'cgroup/bind6', 'cgroup/connect4', 'cgroup/connect6', 'cgroup/getpeername4', 'cgroup/getpeername6', 'cgroup/getsockname4', 'cgroup/getsockname6', 
@@ -51,13 +52,18 @@ for program_type in program_types:
         result_file.write(f"{written_prog_type:<40}")
 
        
-        make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/usr/include/bpf/', '-c', 'output/test.bpf.c', '-o', 'output/test.bpf.o']
+        if program_type == "freplace/print":
+            make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/usr/include/linux', '-I/usr/include/bpf/', '-I/usr/local/include/bpf/', '-c', 'output/freplace2.bpf.c', '-o', 'output/freplace2.bpf.o']
+        else:
+            make_command = ['clang', '-O2', '-g', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/usr/include/linux', '-I/usr/include/bpf/', '-I/usr/local/include/bpf/', '-c', 'output/test.bpf.c', '-o', 'output/test.bpf.o']
+
         make_result = subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
         if program_type == "freplace/print":
             make_command = ['gcc', '-L/usr/lib64/', '-o', 'output/freplace', 'output/freplace.c', '-lbpf']
         else:
             make_command = ['gcc', '-L/usr/lib64/', '-o', 'output/test', 'output/test.c', '-lbpf']
         make_result += subprocess.run(make_command, shell = False, capture_output=True, text=True).stderr
+        print(make_result)
         if 'error' in make_result:
             result_file.write(f"{'yes':<15}")
         else:
@@ -72,6 +78,7 @@ for program_type in program_types:
             run_result = subprocess.run(["./output/freplace"], shell = False, capture_output=True, text=True).stderr
         else:
             run_result = subprocess.run(["./output/test"], shell = False, capture_output=True, text=True).stderr
+        print(run_result)
         if 'helper call might sleep in a non-sleepable prog' in run_result:
             result_file.write(f"{'yes':15}")
         else:
@@ -85,5 +92,5 @@ for program_type in program_types:
 
 result_file.close()
 
-test_struct_ops(uapi_file_path)
+test_struct_ops(kdir)
 compile_results()
