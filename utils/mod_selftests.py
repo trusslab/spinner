@@ -1,7 +1,8 @@
 import os
 import re
+import sys
 
-directory = '/home/priya/linux-6.9/tools/testing/selftests/bpf'
+directory = sys.argv[1]+'/tools/testing/selftests/bpf'
 
 list = open('selftests_list.txt', 'w')
 
@@ -9,7 +10,7 @@ read_start = False
 attach_to = ''
 
 skip_list = ['test_static_linked1.c', 'test_static_linked2.c', 'linked_funcs1.c', 'linked_funcs2.c', 'linked_vars1.c', 'linked_vars2.c', 
-        'linked_maps1.c', 'linked_maps2.c', 'test_subskeleton_lib.c', 'test_subskeleton_lib2.c']
+        'linked_maps1.c', 'linked_maps2.c', 'test_subskeleton.c', 'test_subskeleton_lib.c', 'test_subskeleton_lib2.c']
 
 for root, dirs, files in os.walk(directory):
     for file in files:
@@ -35,7 +36,16 @@ for root, dirs, files in os.walk(directory):
                 if read_start == True and "__naked" in lines[i]:
                     skip=True
 
+                if read_start == True and "__msg" in lines[i]:
+                    skip=True
+
+                if read_start == True and "__jited" in lines[i]:
+                    skip=True
+
                 if read_start == True and ".struct_ops" in attach_to:
+                    skip= True
+
+                if read_start == True and ".data.arr_foo" in attach_to:
                     skip= True
                 
                 if read_start == True and "{" in lines[i]:

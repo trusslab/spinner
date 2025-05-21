@@ -1,7 +1,8 @@
 import os
 import re
+import sys
 
-directory = '/home/priya/linux-6.9/tools/testing/selftests/bpf'
+directory = sys.argv[1]+'/tools/testing/selftests/bpf'
 
 list = open('selftests_list.txt', 'w')
 
