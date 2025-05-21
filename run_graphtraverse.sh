@@ -1,7 +1,4 @@
-step6=`date +%s`
+callgraph=$1
 cd graphtraverse
-bash -c "python3 graphtraverse.py>file_complete_6.14"
-step7=`date +%s`
+bash -c "python3 graphtraverse.py $callgraph > results.txt"
 
-echo $step6
-echo $step7

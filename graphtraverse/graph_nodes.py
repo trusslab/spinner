@@ -348,6 +348,6 @@ def get_nodes(graph_file_name):
 
     json_object2 = json.dumps(function_lists)
 
-    with open('../poc/specs.json', "w") as outfile:
-        outfile.write(json_object2)
+    #with open('../poc/specs.json', "w") as outfile:
+    #    outfile.write(json_object2)
 

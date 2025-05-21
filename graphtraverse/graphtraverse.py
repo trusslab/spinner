@@ -1,8 +1,9 @@
 import networkx as nx
 import json
 from graph_nodes import get_nodes
+import sys
 
-callgraph_file_name = "../mlta/callgraph6.9.dot"
+callgraph_file_name = sys.argv[1]
 node_file_name = "nodes.json"
 get_nodes(callgraph_file_name)
 
