@@ -1,10 +1,19 @@
 import subprocess
 
+def read_s2e_path():
+    with open("config.conf", 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith('S2E_DIR='):
+                _, value = line.split('=', 1)
+                return value.strip().strip('"').strip("'")
+    return None
 # Define the command to run GDB and execute your script
 def disassemble_function(function):
+    s2e_path = read_s2e_path()
     gdb_command = [
         "gdb",
-        "/home/priya/s2e/images/debian-12.5-x86_64/guestfs/vmlinux",
+        s2e_path+"/images/debian-12.5-x86_64/guestfs/vmlinux",
         "--batch",  # Run GDB in batch mode
         "-ex", f"disassemble {function}",  # Your command(s)
         "-ex", "quit"  # Quit GDB when done

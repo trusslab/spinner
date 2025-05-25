@@ -3,8 +3,8 @@ source config.conf
 
 poc_binary=$1
 poc_helper=$2
-poc_dir=/home/priya/defogger/poc
-s2e_dir=/home/priya/s2e
+poc_dir=$(pwd)
+s2e_dir=$S2E_DIR
 s2e_project_dir=$s2e_dir/projects/$poc_binary
 
 probe_file="probe.stp"
@@ -161,4 +161,4 @@ cd $s2e_project_dir
 write_s2e_functions
 find_and_write_helper_arguments
 
-docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i /home/priya/s2e/images/.tmp-output/linux-$KERNEL_VERSION-x86_64/*.deb && cd $s2e_project_dir && sudo stap -a x86_64 -r $KERNEL_VERSION-s2e -g -m probe probe.stp -F && cd /home/priya/defogger/poc/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 
+docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i $s2e_dir/images/.tmp-output/linux-$KERNEL_VERSION-x86_64/*.deb && cd $s2e_project_dir && sudo stap -a x86_64 -r $KERNEL_VERSION-s2e -g -m probe probe.stp -F && cd $poc_dir/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 

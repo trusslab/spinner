@@ -5,6 +5,15 @@ from find_attach import find_attach
 from find_attach import convert_prog_type
 from find_attach import complete_attach
 
+def read_kernel_path():
+    with open("config.conf", 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith('KERNEL_DIR='):
+                _, value = line.split('=', 1)
+                return value.strip().strip('"').strip("'")
+    return None 
+
 def get_helper(line1):
     return line1[1]
 
@@ -75,7 +84,7 @@ def get_possible_prog_types_kfunc(kfunc):
             return possible_prog_types
 
 def get_possible_prog_types_cc(helper):
-    with open('/home/priya/defogger/fptests/output/helper-progtype.json', 'r') as helper_progtype_file:
+    with open('../fptests/output/helper-progtype.json', 'r') as helper_progtype_file:
         helper_progtype = json.load(helper_progtype_file)
 
     if helper not in helper_progtype:
@@ -91,7 +100,7 @@ def get_prog_type_cc(helper):
         possible_prog_types=get_possible_prog_types_kfunc(helper)
     else:
         possible_prog_types=get_possible_prog_types_cc(helper)
-    with open('/home/priya/copy/prog_type-context.json', 'r') as progtype_context_file:
+    with open('../utils/output/prog_type-context.json', 'r') as progtype_context_file:
         progtype_context = json.load(progtype_context_file)
 
     if not possible_prog_types:
@@ -122,7 +131,7 @@ def get_pre_function(line, orig_helper):
         return orig_helper 
 
 def get_possible_prog_types_nl(helper):
-    with open('/home/priya/defogger/fptests/output/precur.json', 'r') as precur_file:
+    with open('../fptests/output/precur.json', 'r') as precur_file:
         precur = json.load(precur_file)
         return precur[helper][0]
 
@@ -162,7 +171,7 @@ def get_prog_type_nl(helper, report_line, lock_type, orig_helper, pref):
     return prog_type+"/"+attach_point
 
 def get_prog_type_secondary(helper):
-    with open('/home/priya/defogger/fptests/output/helper-progtype.json', 'r') as helper_progtype_file:
+    with open('../fptests/output/helper-progtype.json', 'r') as helper_progtype_file:
         helper_progtype = json.load(helper_progtype_file)
 
     if helper not in helper_progtype:
@@ -184,7 +193,8 @@ def get_prog_type_secondary_kfunc(kfunc):
         return complete_attach(possible_prog_types[0])
 
 def get_params(helper):
-    with open('/home/priya/defogger/fptests/bpf.h', 'r') as helper_file:
+    kernel_path=read_kernel_path()
+    with open(kernel_path+'/include/uapi/linux/bpf.h', 'r') as helper_file:
         while True:
             line = helper_file.readline()
             if not line:

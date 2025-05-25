@@ -5,9 +5,9 @@ poc_helper=$2
 nmi=$3
 bug_type=$4
 
-s2e_env_dir=/home/priya/s2e-env 
+s2e_env_dir=$S2E_ENV_DIR 
 
-s2e_dir=/home/priya/s2e
+s2e_dir=$S2E_DIR
 
 cd $s2e_env_dir
 . venv/bin/activate
