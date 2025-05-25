@@ -307,12 +307,109 @@ kfunc_list = {
         "bpf_verify_pkcs7_signature": ["P", "sleepable"]
         }
 
+kfunc_list_new = {
+        "bpf_xdp_flow_lookup" : ["S", "not-sleepable"],
+        "dctcp_react_to_loss" : ["P", "not-sleepable"],
+        "dctcp_get_info": ["P", "not-sleepable"],
+
+        "bpf_modify_return_test_tp": ["NMI", "not-sleepable", 1],
+
+        "bpf_get_kmem_cache": ["NMI", "not-sleepable", 1],
+
+        "bpf_lookup_user_key": ["NMI", "not-sleepable", 1],
+        "bpf_lookup_system_key": ["NMI", "not-sleepable", 1],
+        "bpf_key_put": ["NMI", "not-sleepable", 1],
+        "bpf_verify_pkcs7_signature": ["NMI", "not-sleepable", 1],
+        "bpf_session_is_return": ["NMI", "not-sleepable", 1],
+        "bpf_session_cookie": ["NMI", "not-sleepable", 1],
+        "bpf_send_signal_task": ["NMI", "not-sleepable", 1],
+
+        "scx_bpf_select_cpu_dfl": ["P", "not-sleepable"],
+        "scx_bpf_dsq_insert": ["P", "not-sleepable"],
+        "scx_bpf_dispatch": ["P", "not-sleepable"],
+        "scx_bpf_dsq_insert_vtime": ["P", "not-sleepable"],
+        "scx_bpf_dispatch_vtime": ["P", "not-sleepable"],
+        "scx_bpf_dispatch_nr_slots": ["P", "not-sleepable"],
+        "scx_bpf_dispatch_cancel": ["P", "not-sleepable"],
+        "scx_bpf_dsq_move_to_local": ["P", "not-sleepable"],
+        "scx_bpf_consume": ["P", "not-sleepable"],
+        "scx_bpf_dsq_move_set_slice": ["P", "not-sleepable"],
+        "scx_bpf_dispatch_from_dsq_set_slice": ["P", "not-sleepable"],
+        "scx_bpf_dsq_move_set_vtime": ["P", "not-sleepable"],
+        "scx_bpf_dispatch_from_dsq_set_vtime": ["P", "not-sleepable"],
+        "scx_bpf_dsq_move": ["P", "not-sleepable"],
+        "scx_bpf_dispatch_from_dsq": ["P", "not-sleepable"],
+        "scx_bpf_dsq_move_vtime": ["P", "not-sleepable"],
+        "scx_bpf_dispatch_vtime_from_dsq": ["P", "not-sleepable"],
+        "scx_bpf_reenqueue_local": ["P", "not-sleepable"],
+        "scx_bpf_create_dsq": ["P", "not-sleepable"],
+        "scx_bpf_kick_cpu": ["NMI", "not-sleepable", 1],
+        "scx_bpf_dsq_nr_queued": ["NMI", "not-sleepable", 1],
+        "scx_bpf_destroy_dsq": ["NMI", "not-sleepable", 1],
+        "bpf_iter_scx_dsq_new": ["NMI", "not-sleepable", 1],
+        "bpf_iter_scx_dsq_next": ["NMI", "not-sleepable", 1],
+        "bpf_iter_scx_dsq_destroy": ["NMI", "not-sleepable", 1],
+        "scx_bpf_exit_bstr": ["NMI", "not-sleepable", 1],
+        "scx_bpf_error_bstr": ["NMI", "not-sleepable", 1],
+        "scx_bpf_dump_bstr": ["NMI", "not-sleepable", 1],
+        "scx_bpf_cpuperf_cap": ["NMI", "not-sleepable", 1],
+        "scx_bpf_cpuperf_cur": ["NMI", "not-sleepable", 1],
+        "scx_bpf_cpuperf_set": ["NMI", "not-sleepable", 1],
+        "scx_bpf_nr_cpu_ids": ["NMI", "not-sleepable", 1],
+        "scx_bpf_get_possible_cpumask": ["NMI", "not-sleepable", 1],
+        "scx_bpf_get_online_cpumask": ["NMI", "not-sleepable", 1],
+        "scx_bpf_put_cpumask": ["NMI", "not-sleepable", 1],
+        "scx_bpf_get_idle_cpumask": ["NMI", "not-sleepable", 1],
+        "scx_bpf_get_idle_smtmask": ["NMI", "not-sleepable", 1],
+        "scx_bpf_put_idle_cpumask": ["NMI", "not-sleepable", 1],
+        "scx_bpf_test_and_clear_cpu_idle": ["NMI", "not-sleepable", 1],
+        "scx_bpf_pick_idle_cpu": ["NMI", "not-sleepable", 1],
+        "scx_bpf_pick_any_cpu": ["NMI", "not-sleepable", 1],
+        "scx_bpf_task_running": ["NMI", "not-sleepable", 1],
+        "scx_bpf_task_cpu": ["NMI", "not-sleepable", 1],
+        "scx_bpf_cpu_rq": ["NMI", "not-sleepable", 1],
+        "scx_bpf_task_cgroup": ["NMI", "not-sleepable", 1],
+
+        "bpf_iter_kmem_cache_new": ["NMI", "sleepable", 1],
+        "bpf_iter_kmem_cache_next": ["NMI", "sleepable", 1],
+        "bpf_iter_kmem_cache_destroy": ["NMI", "sleepable", 1],
+
+        "hid_bpf_hw_output_report": ["P", "sleepable"],
+        "hid_bpf_try_input_report": ["P", "sleepable"],
+        "hid_bpf_input_report": ["P", "not-sleepable"],
+
+        "bpf_get_task_exe_file": ["P", "not-sleepable"],
+        "bpf_put_file": ["P", "not-sleepable"],
+        "bpf_path_d_path": ["P", "not-sleepable"],
+        "bpf_get_dentry_xattr": ["P", "sleepable"],
+        "bpf_get_file_xattr": ["P", "sleepable"],
+
+        "bpf_crypto_ctx_create": ["P", "sleepable"],
+        "bpf_crypto_ctx_acquire": ["P", "not-sleepable"],
+        "bpf_crypto_ctx_release": ["P", "not-sleepable"],
+        "bpf_crypto_decrypt": ["S", "not-sleepable"],
+        "bpf_crypto_encrypt": ["S", "not-sleepable"],
+        "bpf_task_from_vpid": ["NMI", "not-sleepable", 1],
+        "bpf_wq_init": ["NMI", "not-sleepable", 1],
+        "bpf_wq_start": ["NMI", "not-sleepable", 1],
+        "bpf_wq_set_callback_impl": ["NMI", "not-sleepable", 1],
+        "bpf_preempt_disable": ["NMI", "not-sleepable", 1],
+        "bpf_preempt_enable": ["NMI", "not-sleepable", 1],
+        "bpf_iter_bits_new": ["NMI", "not-sleepable", 1],
+        "bpf_iter_bits_next": ["NMI", "not-sleepable", 1],
+        "bpf_iter_bits_destroy": ["NMI", "not-sleepable", 1],
+        "bpf_copy_from_user_str": ["NMI", "sleepable", 1],
+}
+
+
+
 function_lists = [function_list_array, function_list_percpu_array, function_list_prog_array, function_list_perf_event_array, 
         function_list_cgroup_array, function_list_array_of_maps, function_list_bloom_filter, function_list_htab, function_list_htab_lru, 
         function_list_htab_percpu, function_list_htab_lru_percpu , function_list_htab_of_maps, function_list_stack_trace, function_list_trie,
         function_list_dev, function_list_dev_hash, function_list_sock, function_list_sock_hash, function_list_cpu, function_list_xsk,
         function_list_reuseport_array, function_list_stack, function_list_queue, function_list_sk_storage, function_list_struct_ops, function_list_ringbuf,
-        function_list_inode_storage, function_list_task_storage, function_list_user_ringbuf, function_list_cgrp_storage, function_list_arena, kfunc_list]
+        function_list_inode_storage, function_list_task_storage, function_list_user_ringbuf, function_list_cgrp_storage, function_list_arena, kfunc_list,
+        kfunc_list_new]
 node_list = {}
 
 
