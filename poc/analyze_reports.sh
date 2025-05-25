@@ -1,14 +1,8 @@
 #!/bin/bash
 
-<<com
-if [[ -z "$1" ]]; then
-    input_file="../graphtraverse/file_complete"
-else
-    input_file="$1"
-fi
-com
+source config.conf
 
-input_file="../graphtraverse/file_complete"
+input_file=$REPORT_FILE
 report="all"
 
 while getopts "i:r:p:" opt; do
