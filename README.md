@@ -50,7 +50,7 @@ There are a few ways to do this but we describe one method here.
 
 1) Make a copy of your running kernel, so you do not need to modify your running kernel
 2) Install and use clang-14. Install wllvm. 
-3) 
+3) Enter the copied kernel source directory
 ```bash
 	$ cd /path/to/kernel/source/for/bc/generation
 ```
@@ -68,19 +68,19 @@ There are a few ways to do this but we describe one method here.
                 .shstrtab 0 : { *(.shstrtab) }                          \
                 .llvm_bc 0 : { *(.llvm_bc) }
 ```
-6) 
+6) Build the kernel
 ```bash
 $ sudo -E make CC=wllvm LLVM_COMPILER=clang CFLAG="-emit-llvm -c -Wno-error" -j16
 ```
 	At this stage you may see some errors triggered by BUILD_BUGS. You can comment out the lines in the kernel source that cause these errors. 
 	This will not cause any problems as you will not install this kernel source.
-7) 
+7) Extract vmlinux.bc
 ```bash
 $ sudo extract-bc vmlinux
 ```
 
 
-##Automated Testing of Reports:
+## Automated Testing of Reports:
 
 ### S2E setup:
 You will need to build s2e. Instructions to do this can be found in the official documentation: https://s2e.systems/docs/s2e-env.html#
@@ -91,14 +91,14 @@ The kernels provided in this repository have been instrumented. Symbolic argumen
 To build an image using your preferred kernel
 
 1) Edit s2e/source/guest-images/Makefile.linux - set LINUX_VERSION to your preferred kernel version.
-2) Activate s2e environment - 
+2) Activate s2e environment:
 ```bash
 	$ cd s2e-env
 	$ . venv/bin/activate
 	$ source ~/s2e/s2e_activate
 ```
-3) Build kernel image -
-```bash
+3) Build kernel image:
+```bash	
 	$ s2e image_build debian-12.5-x86_64
 ```
 
@@ -118,13 +118,13 @@ The last step is to add the necessary s2e plugins.
 ```
 
 ### Tool setup:
-Generate vmlinux.h in the poc/output directory 
+1) Generate vmlinux.h in the poc/output directory 
 ```bash
 $ bpftool btf dump file /sys/kernel/btf/vmlinux format c> poc/output/vmlinux.h 
 ```
-Configuration - Edit the config.conf file with the information for your setup.
+2) Configuration - Edit the config.conf file with the information for your setup.
 
-You can now generate sample programs for testing using the analyse_reports.sh script.
+You can now generate sample programs for testing using the analyze_reports.sh script.
 
 ### Generating sample programs
 
@@ -143,11 +143,7 @@ Generate an s2e project of the specified report-number and will try to use the s
 $ ./analyze_reports.sh -r report-number -p preferred-prog-type
 ``` 
 The available options for -p preferred-prog-type are:
-
-kprobe
-
-fentry
-
-fentry_unlock
-
-tracepoint
+- `kprobe`
+- `fentry`
+- `fentry_unlock`
+- `tracepoint`
