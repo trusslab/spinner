@@ -72,8 +72,9 @@ There are a few ways to do this but we describe one method here.
 ```bash
 $ sudo -E make CC=wllvm LLVM_COMPILER=clang CFLAG="-emit-llvm -c -Wno-error" -j16
 ```
-	At this stage you may see some errors triggered by BUILD_BUGS. You can comment out the lines in the kernel source that cause these errors. 
-	This will not cause any problems as you will not install this kernel source.
+
+At this stage you may see some errors triggered by BUILD_BUGS. You can comment out the lines in the kernel source that cause these errors. 
+This will not cause any problems as you will not install this kernel source.
 7) Extract vmlinux.bc
 ```bash
 $ sudo extract-bc vmlinux
@@ -112,7 +113,7 @@ The last step is to add the necessary s2e plugins.
 	$ s2e new_plugin ForkEBPF
 ```
 3) Copy all the files in the s2e_plugins directory of this repository to s2e/source/s2e/libs2eplugins/src/s2e/Plugins
-4) Rebuild s2e - 
+4) Rebuild s2e: 
 ```bash
 	$ s2e build
 ```
