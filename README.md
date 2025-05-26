@@ -75,6 +75,7 @@ $ sudo -E make CC=wllvm LLVM_COMPILER=clang CFLAG="-emit-llvm -c -Wno-error" -j1
 
 At this stage you may see some errors triggered by BUILD_BUGS. You can comment out the lines in the kernel source that cause these errors. 
 This will not cause any problems as you will not install this kernel source.
+
 7) Extract vmlinux.bc
 ```bash
 $ sudo extract-bc vmlinux
