@@ -9,45 +9,39 @@ This tool attempts to find deadlock bugs in the eBPF runtime. The following step
 Optional:
 4) Automated testing of reports generated in step 3 using S2E symbolic analysis.
 
-## 📂 Table of Contents
-- [Requirements](#Requirements)
-- [Running the Analysis](#Running the analysis)
-- [Generating vmlinux.bc](#Generating vmlinux.bc)
-- [Automated Report Testing](#Automated Report Testing)
-
-##Requirements
+## Requirements
 You will need to build a linux kernel from source with BTF information included. You will also need to install the kernel headers. Next you will need to build and install libbpf and bpftool. Finally you will need to generate vmlinux.bc for the kernel you wish to test. Instructions for this can be found in a dedicated section in this document.
 
 Note: It is recommended to use this tool within a VM to prevent breaking anything.
 
 The kernel configuration used will affect the results of the analysis. Thus, it is recommended to enable all BFF related configurations.
 
-##Running the analysis
+## Running the analysis
 1) First install necessary dependencies:
-<pre> ```bash
+```bash
 	$ ./install_dependencies.sh
 	$ cd mlta
 	$ ./build-llvm.sh
-``` </pre>
+```
 2) Run context analysis:
-	<pre> ```bash $ ./run_selftests.sh path/to/kernel/source``` </pre>
+	```bash $ ./run_selftests.sh path/to/kernel/source```
 3) Run API analysis:
-	<pre> ```bash $ ./run_fptests.sh path/to/kernel/source ``` </pre>
+	```bash $ ./run_fptests.sh path/to/kernel/source```
 You might want to look at any errors at this point. These could indicate some unsatisfied requirements that could affect the accuracy of the analysis. 
 4) Generate callgraph:
-<pre> ```bash
+```bash
 	$ cd mlta
 	<write the path to your vmlinux.bc file in bc.list>
 	$ cd ..
 	$ ./run_mlta.sh 
-``` </pre>
+```
 The generated callgraph should be found in mlta/callgraph.dot
 5) Generate bug reports:
-<pre> ```bash
+```bash
 	$ ./run_graphtraverse.sh path/to/callgraph
-``` </pre>
+```
 
-##Generating vmlinux.bc
+## Generating vmlinux.bc
 There are a few ways to do this but we describe one method here.
 
 1) Make a copy of your running kernel, so you do not need to modify your running kernel
@@ -57,12 +51,14 @@ There are a few ways to do this but we describe one method here.
 	KBUILD_CFLAGS += -fno-inline
 	KBUILD_CFLAGS += -Wno-error
 5) Edit include/asm-generic/vmlinux.lds.h by adding a new section for llvm_bc. It should look something like this.
+```
 #define ELF_DETAILS                                                     \
                 .comment 0 : { *(.comment) }                            \
                 .symtab 0 : { *(.symtab) }                              \
                 .strtab 0 : { *(.strtab) }                              \
                 .shstrtab 0 : { *(.shstrtab) }                          \
                 .llvm_bc 0 : { *(.llvm_bc) }
+```
 6) sudo -E make CC=wllvm LLVM_COMPILER=clang CFLAG="-emit-llvm -c -Wno-error" -j16
 	At this stage you may see some errors triggered by BUILD_BUGS. You can comment out the lines in the kernel source that cause these errors. 
 	This will not cause any problems as you will not install this kernel source.
