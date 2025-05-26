@@ -9,39 +9,50 @@ This tool attempts to find deadlock bugs in the eBPF runtime. The following step
 Optional:
 4) Automated testing of reports generated in step 3 using S2E symbolic analysis.
 
-Requirements:
+## 📂 Table of Contents
+- [Requirements](#Requirements)
+- [Running the Analysis](#Running the analysis)
+- [Generating vmlinux.bc](#Generating vmlinux.bc)
+- [Automated Report Testing](#Automated Report Testing)
+
+##Requirements
 You will need to build a linux kernel from source with BTF information included. You will also need to install the kernel headers. Next you will need to build and install libbpf and bpftool. Finally you will need to generate vmlinux.bc for the kernel you wish to test. Instructions for this can be found in a dedicated section in this document.
 
 Note: It is recommended to use this tool within a VM to prevent breaking anything.
 
 The kernel configuration used will affect the results of the analysis. Thus, it is recommended to enable all BFF related configurations.
 
-Steps to run the analysis:
+##Running the analysis
 1) First install necessary dependencies:
-	./install_dependencies.sh
-	cd mlta
-	./build-llvm.sh
+<pre> ```bash
+	$ ./install_dependencies.sh
+	$ cd mlta
+	$ ./build-llvm.sh
+``` </pre>
 2) Run context analysis:
-	./run_selftests.sh path/to/kernel/source
+	<pre> ```bash $ ./run_selftests.sh path/to/kernel/source``` </pre>
 3) Run API analysis:
-	./run_fptests.sh path/to/kernel/source 
-	You might want to look at any errors at this point. These could indicate some unsatisfied requirements that could affect the accuracy of the analysis. 
+	<pre> ```bash $ ./run_fptests.sh path/to/kernel/source ``` </pre>
+You might want to look at any errors at this point. These could indicate some unsatisfied requirements that could affect the accuracy of the analysis. 
 4) Generate callgraph:
-	cd mlta
+<pre> ```bash
+	$ cd mlta
 	<write the path to your vmlinux.bc file in bc.list>
-	cd ..
-	./run_mlta.sh 
+	$ cd ..
+	$ ./run_mlta.sh 
+``` </pre>
 The generated callgraph should be found in mlta/callgraph.dot
 5) Generate bug reports:
-	./run_graphtraverse.sh path/to/callgraph
+<pre> ```bash
+	$ ./run_graphtraverse.sh path/to/callgraph
+``` </pre>
 
-
-Generating vmlinux.bc:
+##Generating vmlinux.bc
 There are a few ways to do this but we describe one method here.
 
 1) Make a copy of your running kernel, so you do not need to modify your running kernel
 2) Install and use clang-14. Install wllvm. 
-3) cd /path/to/kernel/source/for/bc/generation
+3) $ cd /path/to/kernel/source/for/bc/generation
 4) Add the following lines to the Makefile
 	KBUILD_CFLAGS += -fno-inline
 	KBUILD_CFLAGS += -Wno-error
