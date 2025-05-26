@@ -1,3 +1,5 @@
+source config.conf
+
 poc_dir=$(pwd)
 
 poc_binary=$1
