@@ -128,7 +128,7 @@ $ bpftool btf dump file /sys/kernel/btf/vmlinux format c> poc/output/vmlinux.h
 
 You can now generate sample programs for testing using the analyze_reports.sh script.
 
-### Generating sample programs
+### Generating and using sample programs
 
 Generate s2e projects for all the reports in the report file you provided in the configuration file:
 ```bash
@@ -149,3 +149,10 @@ The available options for -p preferred-prog-type are:
 - `fentry`
 - `fentry_unlock`
 - `tracepoint`
+
+Once you have generated the s2e projects you wanted, you can go to the project and use the launch-s2e.sh script to start the symbolic analysis. 
+Additionally, you can modify and recompile the probe.stp file to decide where you wish to add symbolic arguments.
+
+### Check if any deadlock bugs were triggered
+1) For context confusion bugs, open the serial.txt file and search for any lockdep reports. They will likely be titled with "inconsistent lock state" 
+2) For nested locking bugs, bugs may be reported by lockdep in the serial.txt file. They will likely be titled with "possible recursive locking detected". Alternatively, the DeadlockTimer plugin may catch them. In this case, they will be reported as "self-deadlock" in s2e-last/debug.txt
