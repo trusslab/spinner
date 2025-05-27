@@ -105,7 +105,7 @@ void ForkEBPF::onStateForkDecide(S2EExecutionState *state, const klee::ref<klee:
 
 std::string ForkEBPF::resolveAddress(uint64_t addr) {
     std::ostringstream command;
-    command << "addr2line -e /home/priya/s2e/images/debian-12.5-x86_64/guestfs/vmlinux " << (hexval(addr)) << " > /tmp/addr2line_output.txt 2>/dev/null";
+    command << "addr2line -e ~/s2e/images/debian-12.5-x86_64/guestfs/vmlinux " << (hexval(addr)) << " > /tmp/addr2line_output.txt 2>/dev/null";
     system(command.str().c_str());
 
     std::ostringstream result;

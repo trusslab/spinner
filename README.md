@@ -36,6 +36,7 @@ The kernel configuration used will affect the results of the analysis. Thus, it 
 ```bash
 	$ cd mlta
 	<write the path to your vmlinux.bc file in bc.list>
+	<set SOURCE_CODE_PATH as the path to your kernel source in src/lib/Config.h>
 	$ cd ..
 	$ ./run_mlta.sh 
 ```
@@ -113,8 +114,9 @@ The last step is to add the necessary s2e plugins.
 	$ s2e new_plugin DeadlockTimer
 	$ s2e new_plugin ForkEBPF
 ```
-3) Copy all the files in the s2e_plugins directory of this repository to s2e/source/s2e/libs2eplugins/src/s2e/Plugins
-4) Rebuild s2e: 
+3) In line 108 of s2e_plugins/ForkEBPF, you will need to provide the path to your s2e images' vmlinux. This is should be S2E_DIR/images/debian-12.5-x86_64/guestfs/vmlinux
+4) Copy all the files in the s2e_plugins directory of this repository to s2e/source/s2e/libs2eplugins/src/s2e/Plugins
+5) Rebuild s2e: 
 ```bash
 	$ s2e build
 ```
