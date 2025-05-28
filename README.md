@@ -10,7 +10,14 @@ Optional:
 4) Automated testing of reports generated in step 3 using S2E symbolic analysis.
 
 ## Requirements
-You will need to build a linux kernel from source with BTF information included. You will also need to install the kernel headers. Next you will need to build and install libbpf and bpftool. Finally you will need to generate vmlinux.bc for the kernel you wish to test. Instructions for this can be found in a dedicated section in this document.
+You will need to build a linux kernel from source with BTF information included. You will also need to install the kernel headers. 
+
+Next you will need to build and install libbpf and bpftool. This can be done using the provided script.
+```bash
+	$ ./install_lbpf_bpftool.sh /path/to/kernel/source
+```
+
+Finally you will need to generate vmlinux.bc for the kernel you wish to test. Instructions for this can be found in a dedicated section in this document.
 
 Note: It is recommended to use this tool within a VM to prevent breaking anything.
 
@@ -27,11 +34,13 @@ The kernel configuration used will affect the results of the analysis. Thus, it 
 	```bash 
 	$ ./run_selftests.sh path/to/kernel/source
 	```
+It is recommended to use clang-17 and higher for this step.
+
 3) Run API analysis:
 	```bash 
 	$ ./run_fptests.sh path/to/kernel/source
 	```
-	You might want to look at any errors at this point. These could indicate some unsatisfied requirements that could affect the accuracy of the analysis. 
+	You can view the results in fptests/output/helper-progtype.txt. You might want to look at any errors in the "make error" column at this point. These could indicate some unsatisfied requirements that could affect the accuracy of the analysis. 
 4) Generate callgraph:
 ```bash
 	$ cd mlta
@@ -47,7 +56,9 @@ The generated callgraph should be found in mlta/callgraph.dot
 ```
 
 ## Generating vmlinux.bc
-There are a few ways to do this but we describe one method here.
+There are a few ways to do this. You can try using the IRdumper scripts provided by MLTA. Check their instructions if you wish to do this: https://github.com/umnsec/mlta
+
+We describe one additional method here.
 
 1) Make a copy of your running kernel, so you do not need to modify your running kernel
 2) Install and use clang-14. Install wllvm. 

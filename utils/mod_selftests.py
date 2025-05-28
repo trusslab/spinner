@@ -23,7 +23,8 @@ for root, dirs, files in os.walk(directory):
 
             for i in range(len(lines)):
              
-                if "SEC(\"license\")" in lines[i]:
+                #if "SEC(\"license\")" in lines[i]:
+                if "sec(\"license\")" in lines[i].lower():
                     License = True
                     lines[i] = "char License[] SEC(\"license\") = \"Dual BSD/GPL\";\n"
                 
