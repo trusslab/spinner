@@ -1,4 +1,5 @@
 KDIR=$1
+sudo cp -r /usr/include/asm-generic /usr/include/asm
 
 cd fptests/output
 bpftool btf dump file /sys/kernel/btf/vmlinux format c> vmlinux.h

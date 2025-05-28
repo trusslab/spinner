@@ -73,6 +73,8 @@ public:
 S2E_DEFINE_PLUGIN(ForkEBPF, "Decides whether to Fork or not based on current PC", "", );
 
 void ForkEBPF::initialize() {
+	vmlinux_path = s2e()->getConfig()->getString(getConfigKey() + ".vmlinuxPath");
+	s2e()->getDebugStream() << vmlinux_path <<"\n";
 	s2e()->getCorePlugin()->onStateForkDecide.connect(sigc::mem_fun(*this, &ForkEBPF::onStateForkDecide));
 }
 
@@ -105,7 +107,7 @@ void ForkEBPF::onStateForkDecide(S2EExecutionState *state, const klee::ref<klee:
 
 std::string ForkEBPF::resolveAddress(uint64_t addr) {
     std::ostringstream command;
-    command << "addr2line -e ~/s2e/images/debian-12.5-x86_64/guestfs/vmlinux " << (hexval(addr)) << " > /tmp/addr2line_output.txt 2>/dev/null";
+    command << "addr2line -e "<< vmlinux_path << " " << (hexval(addr)) << " > /tmp/addr2line_output.txt 2>/dev/null";
     system(command.str().c_str());
 
     std::ostringstream result;

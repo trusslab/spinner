@@ -65,7 +65,7 @@ S2E_DEFINE_PLUGIN(LockdepCheck, "Generates test cases once lockdep prints a repo
 void LockdepCheck::initialize() {
     m_address = (uint64_t) s2e()->getConfig()->getInt(getConfigKey() + ".lockdepUsageBugAddress");
     m_address2 = (uint64_t) s2e()->getConfig()->getInt(getConfigKey() + ".lockdepInvalidWaitAddress");
-    s2e()->getDebugStream()<<"TriggerBPF: Tracking address "<<hexval(m_address)<<"\n";
+    s2e()->getDebugStream()<<"LockdepCheck: Tracking address "<<hexval(m_address)<<"\n";
     s2e()->getCorePlugin()->onTranslateInstructionStart.connect(sigc::mem_fun(*this, &LockdepCheck::onTranslateInstruction));
 }
 

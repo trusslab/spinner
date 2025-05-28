@@ -161,4 +161,4 @@ cd $s2e_project_dir
 write_s2e_functions
 find_and_write_helper_arguments
 
-docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i $s2e_dir/images/.tmp-output/linux-$KERNEL_VERSION-x86_64/*.deb && cd $s2e_project_dir && sudo stap -a x86_64 -r $KERNEL_VERSION-s2e -g -m probe probe.stp -F && cd $poc_dir/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 
+docker run --rm  -v $HOME:$HOME linux-build-x86_64 -c "dpkg -i $s2e_dir/images/.tmp-output/linux-$KERNEL_VERSION-x86_64/*.deb && cd $s2e_project_dir && sudo stap -a x86_64 -r $KERNEL_VERSION-s2e -g -m probe probe.stp -F && export KERNEL_VERSION=$KERNEL_VERSION-s2e && cd $poc_dir/nmi_example && make && cp nmi_example.ko $s2e_project_dir" 

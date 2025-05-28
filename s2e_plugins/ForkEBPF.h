@@ -58,7 +58,7 @@ public:
     void onStateForkDecide(S2EExecutionState *state, const klee::ref<klee::Expr> &condition, bool &allowForking);
 
 private:
-
+    std::string vmlinux_path;
     std::string resolveAddress(uint64_t pc);
     // Allow the guest to communicate with this plugin using s2e_invoke_plugin
     virtual void handleOpcodeInvocation(S2EExecutionState *state, uint64_t guestDataPtr, uint64_t guestDataSize);
