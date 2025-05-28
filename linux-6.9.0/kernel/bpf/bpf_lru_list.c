@@ -454,12 +454,10 @@ static struct bpf_lru_node *bpf_common_lru_pop_free(struct bpf_lru *lru,
 	}
 
 	node = __local_list_pop_free(loc_l);
-	s2e_make_symbolic(node,sizeof(struct bpf_lru_node), "node");
 	if (!node) {
 		bpf_lru_list_pop_free_to_local(lru, loc_l);
 		node = __local_list_pop_free(loc_l);
 	}
-	s2e_make_concrete(node, sizeof(struct bpf_lru_node));
 
 	if (node)
 		__local_list_add_pending(lru, loc_l, cpu, node, hash);

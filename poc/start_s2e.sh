@@ -126,6 +126,10 @@ pluginsConfig.DeadlockTimer = {
 }
 
 add_plugin("ForkEBPF")
+pluginsConfig.ForkEBPF = {
+        vmlinuxPath = "$s2e_dir/images/debian-12.5-x86_64/guestfs/vmlinux"
+}
+
 add_plugin("ExceptionTracer")
 EOF
 
@@ -138,6 +142,10 @@ pluginsConfig.LockdepCheck = {
 } 
 
 add_plugin("ForkEBPF")
+pluginsConfig.ForkEBPF = {
+        vmlinuxPath = "$s2e_dir/images/debian-12.5-x86_64/guestfs/vmlinux"
+}
+
 add_plugin("ExceptionTracer")
 EOF
 fi
