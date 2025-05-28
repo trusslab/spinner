@@ -125,9 +125,8 @@ The last step is to add the necessary s2e plugins.
 	$ s2e new_plugin DeadlockTimer
 	$ s2e new_plugin ForkEBPF
 ```
-3) In line 108 of s2e_plugins/ForkEBPF, you will need to provide the path to your s2e images' vmlinux. This is should be S2E_DIR/images/debian-12.5-x86_64/guestfs/vmlinux
-4) Copy all the files in the s2e_plugins directory of this repository to s2e/source/s2e/libs2eplugins/src/s2e/Plugins
-5) Rebuild s2e: 
+3) Copy all the files in the s2e_plugins directory of this repository to s2e/source/s2e/libs2eplugins/src/s2e/Plugins
+4) Rebuild s2e: 
 ```bash
 	$ s2e build
 ```
@@ -164,7 +163,7 @@ The available options for -p preferred-prog-type are:
 - `tracepoint`
 
 Once you have generated the s2e projects you wanted, you can go to the project and use the launch-s2e.sh script to start the symbolic analysis. 
-Additionally, you can modify and recompile the probe.stp file to decide where you wish to add symbolic arguments.
+Additionally, you can modify and recompile the probe.stp file to decide where you wish to add symbolic arguments. You can find instructions to recompile yoursystemtap probes here: https://s2e.systems/docs/Tutorials/SystemTap/index.html
 
 ### Check if any deadlock bugs were triggered
 1) For context confusion bugs, open the serial.txt file and search for any lockdep reports. They will likely be titled with "inconsistent lock state" 
