@@ -316,10 +316,6 @@ kfunc_list_new = {
 
         "bpf_get_kmem_cache": ["NMI", "not-sleepable", 1],
 
-        "bpf_lookup_user_key": ["NMI", "not-sleepable", 1],
-        "bpf_lookup_system_key": ["NMI", "not-sleepable", 1],
-        "bpf_key_put": ["NMI", "not-sleepable", 1],
-        "bpf_verify_pkcs7_signature": ["NMI", "not-sleepable", 1],
         "bpf_session_is_return": ["NMI", "not-sleepable", 1],
         "bpf_session_cookie": ["NMI", "not-sleepable", 1],
         "bpf_send_signal_task": ["NMI", "not-sleepable", 1],

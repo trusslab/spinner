@@ -1,5 +1,5 @@
 CUR_DIR = $(shell pwd)
-LLVM_BUILD=/home/priya/llvm_project/prefix
+LLVM_BUILD=
 SRC_DIR := ${CUR_DIR}/src
 SRC_BUILD := ${CUR_DIR}/build
 

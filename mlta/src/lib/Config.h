@@ -29,7 +29,7 @@ extern int ENABLE_MLTA;
 #define MAP_DECLARATION_FUNCTION
 //#define PRINT_ICALL_TARGET 
 // Path to source code
-#define SOURCE_CODE_PATH "/home/priya/linux-6.9bc/"
+#define SOURCE_CODE_PATH 
 //#define PRINT_SOURCE_LINE
 //#define MLTA_FIELD_INSENSITIVE
 
