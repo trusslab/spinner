@@ -50,6 +50,7 @@ It is recommended to use clang-17 and higher for this step.
 	$ ./run_mlta.sh 
 ```
 The generated callgraph should be found in mlta/callgraph.dot
+
 5) Generate bug reports:
 ```bash
 	$ ./run_graphtraverse.sh path/to/callgraph
