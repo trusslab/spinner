@@ -40,6 +40,7 @@ The kernel configuration used will affect the results of the analysis. Thus, it 
 	$ ./run_selftests.sh path/to/kernel/source
 	```
 It is recommended to use clang-17 and higher for this step.
+
 4) Generate callgraph:
 ```bash
 	$ cd mlta
