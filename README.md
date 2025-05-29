@@ -30,17 +30,16 @@ The kernel configuration used will affect the results of the analysis. Thus, it 
 	$ cd mlta
 	$ ./build-llvm.sh
 ```
-2) Run context analysis:
+2) Run API analysis:
+	```bash 
+	$ ./run_fptests.sh path/to/kernel/source
+	```
+	You can view the results in fptests/output/helper-progtype.txt. You might want to look at any errors in the "make error" column at this point. These could indicate some unsatisfied requirements that could affect the accuracy of the analysis.
+3) Run context analysis:
 	```bash 
 	$ ./run_selftests.sh path/to/kernel/source
 	```
 It is recommended to use clang-17 and higher for this step.
-
-3) Run API analysis:
-	```bash 
-	$ ./run_fptests.sh path/to/kernel/source
-	```
-	You can view the results in fptests/output/helper-progtype.txt. You might want to look at any errors in the "make error" column at this point. These could indicate some unsatisfied requirements that could affect the accuracy of the analysis. 
 4) Generate callgraph:
 ```bash
 	$ cd mlta
