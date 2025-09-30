@@ -445,13 +445,7 @@ static struct bpf_lru_node *bpf_common_lru_pop_free(struct bpf_lru *lru,
 
 	loc_l = per_cpu_ptr(clru->local_list, cpu);
 	
-	if (in_nmi()) {
-		if(!raw_spin_trylock_irqsave(&loc_l->lock, flags)){
-			return NULL;
-		}
-	} else {
-		raw_spin_lock_irqsave(&loc_l->lock, flags);
-	}
+	raw_spin_lock_irqsave(&loc_l->lock, flags);
 
 	node = __local_list_pop_free(loc_l);
 	if (!node) {
@@ -480,13 +474,7 @@ static struct bpf_lru_node *bpf_common_lru_pop_free(struct bpf_lru *lru,
 	do {
 		steal_loc_l = per_cpu_ptr(clru->local_list, steal);
 		
-		if (in_nmi()) {
-			if(!raw_spin_trylock_irqsave(&steal_loc_l->lock, flags)) {
-				return NULL;
-			}
-		} else {
-			raw_spin_lock_irqsave(&steal_loc_l->lock, flags);
-		}
+		raw_spin_lock_irqsave(&steal_loc_l->lock, flags);
 
 		node = __local_list_pop_free(steal_loc_l);
 		if (!node)
@@ -500,13 +488,7 @@ static struct bpf_lru_node *bpf_common_lru_pop_free(struct bpf_lru *lru,
 	loc_l->next_steal = steal;
 
 	if (node) {
-		if (in_nmi()) {
-			if (!raw_spin_trylock_irqsave(&loc_l->lock, flags)) {
-				return NULL;
-			}
-		} else {
-			raw_spin_lock_irqsave(&loc_l->lock, flags);
-		}
+		raw_spin_lock_irqsave(&loc_l->lock, flags);
 		__local_list_add_pending(lru, loc_l, cpu, node, hash);
 		raw_spin_unlock_irqrestore(&loc_l->lock, flags);
 	}
@@ -537,13 +519,7 @@ static void bpf_common_lru_push_free(struct bpf_lru *lru,
 
 		loc_l = per_cpu_ptr(lru->common_lru.local_list, node->cpu);
 
-		if (in_nmi()) {
-			if (!raw_spin_trylock_irqsave(&loc_l->lock, flags)) {
-				return;
-			}
-		} else {
-			raw_spin_lock_irqsave(&loc_l->lock, flags);
-		}
+		raw_spin_lock_irqsave(&loc_l->lock, flags);
 
 		if (unlikely(node->type != BPF_LRU_LOCAL_LIST_T_PENDING)) {
 			raw_spin_unlock_irqrestore(&loc_l->lock, flags);
