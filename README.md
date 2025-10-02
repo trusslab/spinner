@@ -1,4 +1,4 @@
-# Gopher
+# Spinner
 
 This tool attempts to find deadlock bugs in the eBPF runtime. The following steps are performed by the tool:
 1) Dynamic analysis to find relevant information needed to detect deadlock bugs. 
